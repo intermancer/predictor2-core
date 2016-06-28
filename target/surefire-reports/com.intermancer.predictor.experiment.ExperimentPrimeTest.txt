@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.intermancer.predictor.experiment.ExperimentPrimeTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 230.345 sec

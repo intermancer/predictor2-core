@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<store-entry score="2.0">
+	<identity>4</identity>
+	<organism xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:type="java:com.intermancer.predictor.organism.BaseOrganism">
+		<gene-segments xsi:type="java:com.intermancer.predictor.gene.GeneSegment">
+			<genes window-size="5" available-after-window-init="true"
+				offset="-1" hungry-cycles="4"
+				xsi:type="java:com.intermancer.predictor.gene.window.MovingSumWG" />
+		</gene-segments>
+		<gene-segments xsi:type="java:com.intermancer.predictor.gene.GeneSegment">
+			<genes inverse="true" negative="false" constant="5.0" offset="-1"
+				hungry-cycles="0"
+				xsi:type="java:com.intermancer.predictor.gene.constant.MultiplicationCG" />
+		</gene-segments>
+	</organism>
+</store-entry>
