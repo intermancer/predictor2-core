@@ -3,11 +3,11 @@ package com.intermancer.predictor.experiment;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.intermancer.predictor.breed.BreedStrategy;
-import com.intermancer.predictor.experiment.organism.OrganismStore;
-import com.intermancer.predictor.experiment.organism.OrganismStoreRecord;
 import com.intermancer.predictor.feeder.Feeder;
 import com.intermancer.predictor.organism.Organism;
+import com.intermancer.predictor.organism.breed.BreedStrategy;
+import com.intermancer.predictor.organism.store.OrganismStore;
+import com.intermancer.predictor.organism.store.OrganismStoreRecord;
 
 public class DefaultExperiment implements Experiment {
 

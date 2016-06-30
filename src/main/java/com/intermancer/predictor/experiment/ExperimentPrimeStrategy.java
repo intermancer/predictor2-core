@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.intermancer.predictor.breed.BreedStrategy;
-import com.intermancer.predictor.experiment.organism.OrganismStore;
-import com.intermancer.predictor.experiment.organism.OrganismStoreRecord;
 import com.intermancer.predictor.feeder.Feeder;
 import com.intermancer.predictor.organism.Organism;
+import com.intermancer.predictor.organism.breed.BreedStrategy;
+import com.intermancer.predictor.organism.store.OrganismStore;
+import com.intermancer.predictor.organism.store.OrganismStoreRecord;
+import com.intermancer.predictor.organism.store.StoreFullException;
 
 public class ExperimentPrimeStrategy implements ExperimentStrategy {
 	
@@ -29,7 +30,7 @@ public class ExperimentPrimeStrategy implements ExperimentStrategy {
 		List<OrganismStoreRecord> parents = new ArrayList<OrganismStoreRecord>();
 		
 		// We will pull alpha from the top quarter.
-		OrganismStoreRecord alpha = store.getRandomOrganismStoreRecord(0.25);
+		OrganismStoreRecord alpha = store.getRandomOrganismStoreRecordFromLowScorePool(0.25);
 		parents.add(alpha);
 
 		// We will pull beta from the entire pool.
@@ -64,7 +65,7 @@ public class ExperimentPrimeStrategy implements ExperimentStrategy {
 
 	@Override
 	public boolean mergeIntoPopulation(List<OrganismStoreRecord> ancestors, 
-			List<OrganismStoreRecord> children, OrganismStore store) {
+			List<OrganismStoreRecord> children, OrganismStore store) throws StoreFullException {
 		List<OrganismStoreRecord> allOrganisms = new ArrayList<OrganismStoreRecord>();
 		allOrganisms.addAll(children);
 		allOrganisms.addAll(ancestors);
@@ -72,18 +73,29 @@ public class ExperimentPrimeStrategy implements ExperimentStrategy {
 		
 		boolean parentReplaced = false;
 		
+		List<OrganismStoreRecord> recordsToRemove = new ArrayList<OrganismStoreRecord>();
+		List<OrganismStoreRecord> recordsToAdd = new ArrayList<OrganismStoreRecord>();
+		
 		for (int i = 0; i < allOrganisms.size(); i++) {
 			OrganismStoreRecord record = allOrganisms.get(i);
 			if (i < 2) {
 				if (record.getId() == null) {
-					store.addRecord(record);
+					recordsToAdd.add(record);
 				}
 			} else {
 				if (record.getId() != null) {
-					store.removeRecord(record);
+					recordsToRemove.add(record);
 					parentReplaced = true;
 				}
 			}
+		}
+		
+		for (OrganismStoreRecord record: recordsToRemove) {
+			store.removeRecord(record);
+		}
+		
+		for (OrganismStoreRecord record: recordsToAdd) {
+			store.addRecord(record);
 		}
 		
 		store.analyze();

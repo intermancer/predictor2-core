@@ -1,4 +1,4 @@
-package com.intermancer.predictor.breed;
+package com.intermancer.predictor.organism.breed;
 
 import java.util.List;
 

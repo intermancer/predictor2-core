@@ -2,7 +2,7 @@ package com.intermancer.predictor.experiment;
 
 import java.util.List;
 
-import com.intermancer.predictor.experiment.organism.OrganismStoreRecord;
+import com.intermancer.predictor.organism.store.OrganismStoreRecord;
 
 public class ExperimentCycleResult {
 	

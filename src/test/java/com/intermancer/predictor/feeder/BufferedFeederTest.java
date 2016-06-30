@@ -10,8 +10,8 @@ import static org.junit.Assert.*;
 import com.intermancer.predictor.data.ConsumeResponse;
 import com.intermancer.predictor.data.Quantum;
 import com.intermancer.predictor.evaluator.PredictiveEvaluator;
-import com.intermancer.predictor.experiment.organism.DefaultOrganismStoreInitializer;
 import com.intermancer.predictor.organism.Organism;
+import com.intermancer.predictor.organism.store.DefaultOrganismStoreInitializer;
 import com.intermancer.predictor.system.SystemTest;
 
 /**

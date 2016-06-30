@@ -1,4 +1,4 @@
-package com.intermancer.predictor.experiment.organism;
+package com.intermancer.predictor.organism.store;
 
 import java.util.Comparator;
 

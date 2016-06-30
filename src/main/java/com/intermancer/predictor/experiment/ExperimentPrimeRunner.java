@@ -8,18 +8,18 @@ import java.util.List;
 
 import org.springframework.core.io.ClassPathResource;
 
-import com.intermancer.predictor.breed.BreedStrategy;
-import com.intermancer.predictor.breed.DefaultBreedStrategy;
 import com.intermancer.predictor.evaluator.PredictiveEvaluator;
-import com.intermancer.predictor.experiment.organism.DefaultOrganismStoreInitializer;
-import com.intermancer.predictor.experiment.organism.InMemoryQuickAndDirtyOrganismStore;
-import com.intermancer.predictor.experiment.organism.OrganismStore;
 import com.intermancer.predictor.feeder.BufferedFeeder;
 import com.intermancer.predictor.feeder.Feeder;
 import com.intermancer.predictor.feeder.SimpleRF;
 import com.intermancer.predictor.mutation.DefaultMutationAssistant;
 import com.intermancer.predictor.mutation.DefaultMutationContext;
 import com.intermancer.predictor.mutation.MutationBreedStrategyWrapper;
+import com.intermancer.predictor.organism.breed.BreedStrategy;
+import com.intermancer.predictor.organism.breed.DefaultBreedStrategy;
+import com.intermancer.predictor.organism.store.DefaultOrganismStoreInitializer;
+import com.intermancer.predictor.organism.store.InMemoryQuickAndDirtyOrganismStore;
+import com.intermancer.predictor.organism.store.OrganismStore;
 
 public class ExperimentPrimeRunner {
 	

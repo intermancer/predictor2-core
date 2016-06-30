@@ -1,4 +1,4 @@
-package com.intermancer.predictor.experiment.organism;
+package com.intermancer.predictor.organism.store;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,31 +14,28 @@ public class InMemoryQuickAndDirtyOrganismStore implements OrganismStore {
 	private List<OrganismStoreRecord> records;
 	private int maxCapacity = DEFAULT_MAX_CAPACITY;
 
-	private boolean isSorted = false;
-	
 	public InMemoryQuickAndDirtyOrganismStore() {
 		records = new ArrayList<OrganismStoreRecord>();
 	}
 
 	@Override
-	public void addRecord(OrganismStoreRecord storeRecord) {
-		storeRecord.setId(getNextId());
+	public void addRecord(OrganismStoreRecord storeRecord) throws StoreFullException {
 		if (records.size() < maxCapacity) {
-			if (isSorted) {
-				int possibleIndex = 
-						Collections.binarySearch(records, 
-								storeRecord, OrganismStoreRecord.COMPARATOR);
-				if (possibleIndex < 0) {
-					possibleIndex = -possibleIndex;
-					possibleIndex--;
-				}
-				records.add(possibleIndex, storeRecord);
-				for (int i = possibleIndex + 1; i < records.size(); i++) {
-					OrganismStoreRecord record = records.get(i);
-					record.setIndex(i);
-				}
+			storeRecord.setId(getNextId());
+			int possibleIndex = 
+					Collections.binarySearch(records, 
+							storeRecord, OrganismStoreRecord.COMPARATOR);
+			if (possibleIndex < 0) {
+				possibleIndex = -possibleIndex;
+				possibleIndex--;
 			}
-			records.add(storeRecord);
+			records.add(possibleIndex, storeRecord);
+			for (int i = possibleIndex; i < records.size(); i++) {
+				OrganismStoreRecord record = records.get(i);
+				record.setIndex(i);
+			}
+		} else {
+			throw new StoreFullException("OrganismStore maxCapacity:" + maxCapacity);
 		}
 	}
 
@@ -68,11 +65,11 @@ public class InMemoryQuickAndDirtyOrganismStore implements OrganismStore {
 
 	@Override
 	public OrganismStoreRecord getRandomOrganismStoreRecord() {
-		return getRandomOrganismStoreRecord(1.0);
+		return getRandomOrganismStoreRecordFromLowScorePool(1.0);
 	}
 	
 	@Override
-	public OrganismStoreRecord getRandomOrganismStoreRecord(double percentage) {
+	public OrganismStoreRecord getRandomOrganismStoreRecordFromLowScorePool(double percentage) {
 		int highIndex = records.size() - 1;
 		if (percentage < 1.0) {
 			highIndex = (int) (percentage * highIndex);
@@ -116,10 +113,6 @@ public class InMemoryQuickAndDirtyOrganismStore implements OrganismStore {
 
 	@Override
 	public void analyze() {
-		if (!isSorted) {
-			Collections.sort(records, OrganismStoreRecord.COMPARATOR);
-			isSorted  = true;
-		}
 		for (int i = 0; i < records.size(); i++) {
 			records.get(i).setIndex(i);
 		}
@@ -136,6 +129,10 @@ public class InMemoryQuickAndDirtyOrganismStore implements OrganismStore {
 	@Override
 	public OrganismStoreRecord findByIndex(int index) {
 		return records.get(index);
+	}
+	
+	public List<OrganismStoreRecord> getRecords() {
+		return records;
 	}
 
 }

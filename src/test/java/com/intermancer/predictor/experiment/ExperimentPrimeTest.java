@@ -10,12 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intermancer.predictor.experiment.organism.InMemoryQuickAndDirtyOrganismStore;
-import com.intermancer.predictor.experiment.organism.OrganismStoreRecord;
 import com.intermancer.predictor.gene.Gene;
 import com.intermancer.predictor.gene.constant.AdditionCG;
 import com.intermancer.predictor.organism.BaseOrganism;
 import com.intermancer.predictor.organism.Organism;
+import com.intermancer.predictor.organism.store.InMemoryQuickAndDirtyOrganismStore;
+import com.intermancer.predictor.organism.store.OrganismStoreRecord;
 import com.intermancer.predictor.system.SystemTest;
 
 public class ExperimentPrimeTest extends SystemTest {

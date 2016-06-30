@@ -1,8 +1,8 @@
 package com.intermancer.predictor.experiment;
 
-import com.intermancer.predictor.breed.BreedStrategy;
-import com.intermancer.predictor.experiment.organism.OrganismStore;
 import com.intermancer.predictor.feeder.Feeder;
+import com.intermancer.predictor.organism.breed.BreedStrategy;
+import com.intermancer.predictor.organism.store.OrganismStore;
 
 public interface Experiment {
 

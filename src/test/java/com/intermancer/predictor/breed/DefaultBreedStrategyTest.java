@@ -6,8 +6,6 @@ import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import com.intermancer.predictor.breed.BreedStrategy;
-import com.intermancer.predictor.breed.DefaultBreedStrategy;
 import com.intermancer.predictor.gene.Gene;
 import com.intermancer.predictor.gene.Chromosome;
 import com.intermancer.predictor.gene.operation.AdditionOG;
@@ -17,6 +15,8 @@ import com.intermancer.predictor.gene.transform.FloorTG;
 import com.intermancer.predictor.gene.window.DelayWG;
 import com.intermancer.predictor.organism.BaseOrganism;
 import com.intermancer.predictor.organism.Organism;
+import com.intermancer.predictor.organism.breed.BreedStrategy;
+import com.intermancer.predictor.organism.breed.DefaultBreedStrategy;
 
 public class DefaultBreedStrategyTest {
 	

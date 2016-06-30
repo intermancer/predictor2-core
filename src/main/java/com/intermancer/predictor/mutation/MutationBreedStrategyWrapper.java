@@ -3,8 +3,8 @@ package com.intermancer.predictor.mutation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.intermancer.predictor.breed.BreedStrategy;
 import com.intermancer.predictor.organism.Organism;
+import com.intermancer.predictor.organism.breed.BreedStrategy;
 
 /**
  * Mutation is handled by wrapping a BreedStrategy.

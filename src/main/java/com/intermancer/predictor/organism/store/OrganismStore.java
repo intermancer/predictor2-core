@@ -1,12 +1,12 @@
-package com.intermancer.predictor.experiment.organism;
+package com.intermancer.predictor.organism.store;
 
 public interface OrganismStore {
 
-	void addRecord(OrganismStoreRecord storeRecord);
+	void addRecord(OrganismStoreRecord storeRecord) throws StoreFullException;
 	Long getNextId();
 	boolean hasCapacity();
 	OrganismStoreRecord getRandomOrganismStoreRecord();
-	OrganismStoreRecord getRandomOrganismStoreRecord(double d);
+	OrganismStoreRecord getRandomOrganismStoreRecordFromLowScorePool(double d);
 
 	long getCount();
 	void removeRecord(OrganismStoreRecord storeRecord);
