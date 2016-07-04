@@ -20,7 +20,7 @@ import com.intermancer.predictor.system.SystemTest;
 
 public class ExperimentPrimeTest extends SystemTest {
 	
-	private static final int MIN_ITERATIONS = 10000;
+	private static final int MIN_ITERATIONS = 10;
 	
 	ObjectMapper mapper;
 	String jsonOrganism;
@@ -79,6 +79,7 @@ public class ExperimentPrimeTest extends SystemTest {
 		AnalysisExperimentListener analysisListener = new AnalysisExperimentListener();
 		experimentRunner.addExperimentListener(analysisListener);
 		ExperimentContext context = new ExperimentContext();
+		context.setNumberOfCycles(10);
 		experimentRunner.runExperimentSeries(context);
 		System.out.println("");
 		System.out.println(analysisListener.getExperimentResult());
@@ -100,7 +101,7 @@ public class ExperimentPrimeTest extends SystemTest {
 		assertNotNull(hydratedOrganism);
 		assertNotNull(hydratedOrganism.getChromosomes());
 		assertTrue(hydratedOrganism.getChromosomes().size() == 1);
-		AdditionCG gene = (AdditionCG) (hydratedOrganism.getChromosomes().get(0).getGenes().get(0));
+		assertTrue(hydratedOrganism.getChromosomes().get(0).getGenes().get(0) instanceof AdditionCG);
 	}
 
 	@Test

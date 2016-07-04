@@ -14,8 +14,6 @@ public class SimpleRF extends AbstractReaderFeeder {
 	public static final String DEFAULT_DATE_FORMAT = "yyyyMMdd";
 	private String dateFormat = DEFAULT_DATE_FORMAT;
 	private SimpleDateFormat dateParser;
-	private int tokenBreadth;
-	private boolean incrementTokenBreadth;
 
 	public SimpleRF() {
 		super();
@@ -40,12 +38,8 @@ public class SimpleRF extends AbstractReaderFeeder {
 		quantum.addChannel(new Channel((double) timestamp.getTime()));
 		while(tokenizer.hasMoreTokens()) {
 			quantum.addChannel(new Channel(Double.parseDouble(tokenizer.nextToken())));
-			if(incrementTokenBreadth) {
-				tokenBreadth++;
-			}
 		}
 		quantum.setCompressionBoundary();
-		incrementTokenBreadth = false;
 		return quantum;
 	}
 

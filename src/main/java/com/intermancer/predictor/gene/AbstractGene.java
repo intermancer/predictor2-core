@@ -84,7 +84,7 @@ public abstract class AbstractGene implements Gene {
 		for(int offset : getOffsets()) {
 			hashValue += Math.abs(offset);
 		}
-		return 0;
+		return super.hashCode() + hashValue;
 	}
 
 	@Override
@@ -103,6 +103,15 @@ public abstract class AbstractGene implements Gene {
 	
 	public double getIndexedValue(int index) {
 		return getValues()[getOffsets()[index]];
+	}
+
+	@Override
+	public String getClassname() {
+		return this.getClass().getName();
+	}
+	
+	public void setClassname(String classname) {
+		// This is here to make Jackson happy.
 	}
 
 }

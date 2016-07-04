@@ -21,12 +21,11 @@ import com.intermancer.predictor.organism.store.DefaultOrganismStoreInitializer;
 import com.intermancer.predictor.organism.store.InMemoryQuickAndDirtyOrganismStore;
 import com.intermancer.predictor.organism.store.OrganismStore;
 
-public class ExperimentPrimeRunner {
+public class ExperimentPrimeRunner implements Runnable {
 	
 	protected static final String DEVELOPMENT_DATA_PATH = "com/intermancer/predictor/test/data/sp500-ascii/GSPC.TXT";
 	protected static final int DEFAULT_PREDICTIVE_WINDOW_SIZE = 4;
 	private static final int DEFAULT_NUMBER_OF_MUTATIONS_FOR_INIT = 5;
-	private static final int DEFAULT_NUMBER_OF_CYCLES = 10000;
 	
 	private Feeder feeder;
 	private Experiment experiment;
@@ -36,7 +35,11 @@ public class ExperimentPrimeRunner {
 	
 	private List<ExperimentListener> listeners;
 	
-	private int numberOfIterations = DEFAULT_NUMBER_OF_CYCLES;
+	private int cycles;
+	private int iteration;
+	private ExperimentCycleResult lastExperimentCycleResult;
+	private boolean continueExperimenting;
+	private ExperimentResult lastExperimentResult;
 	
 	public ExperimentPrimeRunner() {
 		listeners = new ArrayList<ExperimentListener>();
@@ -74,6 +77,9 @@ public class ExperimentPrimeRunner {
 		for (ExperimentListener listener : listeners) {
 			listener.initializeExperimentListener(experiment);
 		}
+		
+		cycles = 1;
+		continueExperimenting = false;
 	}
 
 	protected Reader getFileReader(String resourceClasspath) {
@@ -96,21 +102,15 @@ public class ExperimentPrimeRunner {
 	}
 
 	public ExperimentCycleResult runExperimentCycle() throws Exception {
-		return experiment.runExperimentCycle();
+		ExperimentCycleResult cycleResult = experiment.runExperimentCycle();
+		listenersProcessExperimentCycleResult(cycleResult);
+		return cycleResult;
 	}
 	
 	public void runExperimentSeries(ExperimentContext context) throws Exception {
 		init();
-		for (int i = 0; i < getNumberOfIterations(); i++) {
-			ExperimentCycleResult cycleResult = experiment.runExperimentCycle();
-			listenersProcessExperimentCycleResult(cycleResult);
-		}
-		finalizeListeners();
-	}
-
-	private void finalizeListeners() {
-		for (ExperimentListener listener : listeners) {
-			listener.endExperiment(experiment);
+		for (int i = 0; i < context.getNumberOfCycles(); i++) {
+			runExperimentCycle();
 		}
 	}
 
@@ -144,14 +144,6 @@ public class ExperimentPrimeRunner {
 		this.experimentStrategy = experimentStrategy;
 	}
 
-	public int getNumberOfIterations() {
-		return numberOfIterations;
-	}
-
-	public void setNumberOfIterations(int numberOfIterations) {
-		this.numberOfIterations = numberOfIterations;
-	}
-
 	public void setExperiment(Experiment experiment) {
 		this.experiment = experiment;
 	}
@@ -162,6 +154,67 @@ public class ExperimentPrimeRunner {
 
 	public void addExperimentListener(ExperimentListener experimentListener) {
 		listeners.add(experimentListener);
+	}
+	
+	public void setCycles(int cycles) {
+		this.cycles = cycles;
+	}
+	
+	public int getCycles() {
+		return cycles;
+	}
+	
+	public int getIteration() {
+		return iteration;
+	}
+	
+	public ExperimentCycleResult getLastExperimentCycleResult() {
+		return lastExperimentCycleResult;
+	}
+
+	@Override
+	public void run() {
+		try {
+			startExperiment();
+		} catch (Exception ex) {
+			// Nothing for now
+		}
+	}
+
+	public synchronized void startExperiment() throws Exception {
+		ExperimentResult experimentResult = new ExperimentResult();
+		experimentResult.setStartHighScore(getOrganismStore().getHighestScore());
+		experimentResult.setStartLowScore(getOrganismStore().getLowestScore());
+		long millisStart = System.currentTimeMillis();
+		
+		int parentsReplaced = 0;
+		for (iteration = 0; (iteration < cycles) || continueExperimenting; iteration++) {
+			ExperimentCycleResult experimentCycleResult = experiment.runExperimentCycle();
+			if (experimentCycleResult.isParentWasReplaced()) {
+				parentsReplaced++;
+			}
+			lastExperimentCycleResult = experimentCycleResult;
+		}
+		
+		experimentResult.setImprovementCycles(parentsReplaced);
+		experimentResult.setFinishHighScore(getOrganismStore().getHighestScore());
+		experimentResult.setFinishLowScore(getOrganismStore().getLowestScore());
+		long millisEnd = System.currentTimeMillis();
+		experimentResult.setDurationInMillis(millisEnd - millisStart);
+		
+		lastExperimentResult = experimentResult;
+	}
+
+	public boolean isContinueExperimenting() {
+		return continueExperimenting;
+	}
+
+	public void setContinueExperimenting(boolean continueExperimenting) {
+		this.continueExperimenting = continueExperimenting;
+	}
+
+	public ExperimentResult getLastExperimentResult() {
+		return lastExperimentResult;
 	}
 	
 }

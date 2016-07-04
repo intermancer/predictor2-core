@@ -22,5 +22,6 @@ public interface Gene extends QuantumConsumer, Mutable {
 	 *         produce meaningful data.
 	 */
 	int getHungryCycles();
+	String getClassname();
 
 }

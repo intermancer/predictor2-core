@@ -1,5 +1,13 @@
 package com.intermancer.predictor.experiment;
 
+/**
+ * This ExperimentListener expects to watch an entire experiment, with a beginning and end.
+ * Not appropriate in situations where the system is simply started and allowed to run for an
+ * arbitrary amount of time.
+ * 
+ * @author JohnFryar
+ *
+ */
 public class AnalysisExperimentListener implements ExperimentListener {
 	
 	private ExperimentResult experimentResult = new ExperimentResult();
@@ -22,10 +30,8 @@ public class AnalysisExperimentListener implements ExperimentListener {
 		if (cycleResult.isParentWasReplaced()) {
 			experimentResult.incrementImprovementCycles();
 		}
-	}
-
-	@Override
-	public void endExperiment(Experiment experiment) {
+		
+		// Every experiment cycle could be the last.
 		getEndingStatistics(experiment);
 		endTimeInMillis = System.currentTimeMillis();
 		experimentResult.setDurationInMillis(endTimeInMillis - startTimeInMillis);

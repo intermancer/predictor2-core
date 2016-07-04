@@ -45,8 +45,7 @@ public class BufferedFeederTest extends SystemTest {
 		memorizer = new MemorizingFCL(MEMORIZER_WINDOW);
 		readerFeeder.addFeedCycleListener(memorizer);
 
-		DefaultOrganismStoreInitializer builder = new DefaultOrganismStoreInitializer();
-		organism = builder.getMovingAverage(4);
+		organism = DefaultOrganismStoreInitializer.getMovingAverage(4);
 		readerFeeder.setOrganism(organism);
 	}
 	

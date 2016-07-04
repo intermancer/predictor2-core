@@ -27,8 +27,4 @@ public class ProgressReportingEL implements ExperimentListener {
 		}
 	}
 
-	@Override
-	public void endExperiment(Experiment experiment) {
-	}
-
 }

@@ -46,7 +46,7 @@ public class InMemoryQuickAndDirtyOrganismStoreTest extends SystemTest {
 	
 	@Test
 	public void testHasCapacity() throws Exception {
-		inMemoryQuickAndDirtyStore.setMaxCapacity(1);
+		inMemoryQuickAndDirtyStore.setMaxSize(1);
 		assertTrue(inMemoryQuickAndDirtyStore.hasCapacity());
 		testAddRecord();
 		assertFalse(inMemoryQuickAndDirtyStore.hasCapacity());
@@ -72,7 +72,7 @@ public class InMemoryQuickAndDirtyOrganismStoreTest extends SystemTest {
 	
 	@Test
 	public void testGetMaxCapacity() {
-		assertTrue(inMemoryQuickAndDirtyStore.getMaxCapacity()
+		assertTrue(inMemoryQuickAndDirtyStore.getMaxSize()
 				== InMemoryQuickAndDirtyOrganismStore.DEFAULT_MAX_CAPACITY);
 	}
 	

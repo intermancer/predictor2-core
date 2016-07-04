@@ -6,13 +6,19 @@ import java.util.List;
 
 import com.intermancer.predictor.mutation.MutationUtility;
 
+/**
+ * This OrganismStore is not thread-safe.
+ * 
+ * @author JohnFryar
+ *
+ */
 public class InMemoryQuickAndDirtyOrganismStore implements OrganismStore {
 	
-	public static final int DEFAULT_MAX_CAPACITY = 1000;
+	public static final long DEFAULT_MAX_CAPACITY = 1000;
 
 	private long nextId = 0;
 	private List<OrganismStoreRecord> records;
-	private int maxCapacity = DEFAULT_MAX_CAPACITY;
+	private long maxSize = DEFAULT_MAX_CAPACITY;
 
 	public InMemoryQuickAndDirtyOrganismStore() {
 		records = new ArrayList<OrganismStoreRecord>();
@@ -20,7 +26,7 @@ public class InMemoryQuickAndDirtyOrganismStore implements OrganismStore {
 
 	@Override
 	public void addRecord(OrganismStoreRecord storeRecord) throws StoreFullException {
-		if (records.size() < maxCapacity) {
+		if (records.size() < maxSize) {
 			storeRecord.setId(getNextId());
 			int possibleIndex = 
 					Collections.binarySearch(records, 
@@ -35,7 +41,7 @@ public class InMemoryQuickAndDirtyOrganismStore implements OrganismStore {
 				record.setIndex(i);
 			}
 		} else {
-			throw new StoreFullException("OrganismStore maxCapacity:" + maxCapacity);
+			throw new StoreFullException("OrganismStore maxCapacity:" + maxSize);
 		}
 	}
 
@@ -52,15 +58,20 @@ public class InMemoryQuickAndDirtyOrganismStore implements OrganismStore {
 
 	@Override
 	public boolean hasCapacity() {
-		return records.size() < maxCapacity;
+		return records.size() < maxSize;
 	}
 
-	public int getMaxCapacity() {
-		return maxCapacity;
+	@Override
+	public long getMaxSize() {
+		return maxSize;
 	}
 
-	public void setMaxCapacity(int maxCapacity) {
-		this.maxCapacity = maxCapacity;
+	public void setMaxSize(long maxSize) {
+		this.maxSize = maxSize;
+	}
+
+	public void setMaxSize(Long maxSize) {
+		setMaxSize(maxSize.longValue());
 	}
 
 	@Override
