@@ -13,6 +13,7 @@ public class ExperimentResult {
 	private double finishHighScore;
 	private double finishLowScore;
 	private long durationInMillis;
+	private int iteration;
 	
 	public double getStartHighScore() {
 		return startHighScore;
@@ -70,10 +71,6 @@ public class ExperimentResult {
 		this.durationInMillis = durationInMillis;
 	}
 
-	public void incrementCycles() {
-		cycles++;
-	}
-	
 	public void incrementImprovementCycles() {
 		improvementCycles++;
 	}
@@ -95,6 +92,14 @@ public class ExperimentResult {
 			// swallow
 		}
 		return jsonOutput;
+	}
+
+	public void setIteration(int iteration) {
+		this.iteration = iteration;
+	}
+	
+	public int getIteration() {
+		return iteration;
 	}
 
 }

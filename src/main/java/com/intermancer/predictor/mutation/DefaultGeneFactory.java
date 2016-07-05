@@ -6,8 +6,10 @@ import java.util.List;
 import com.intermancer.predictor.gene.Gene;
 import com.intermancer.predictor.gene.GeneticUtility;
 import com.intermancer.predictor.gene.constant.AdditionCG;
+import com.intermancer.predictor.gene.constant.ExponentialCG;
 import com.intermancer.predictor.gene.constant.ModulusCG;
 import com.intermancer.predictor.gene.constant.MultiplicationCG;
+import com.intermancer.predictor.gene.logic.SwitchLG;
 //import com.intermancer.predictor.gene.constant.PowerCG;
 //import com.intermancer.predictor.gene.logic.ComparisonSwitchLG;
 //import com.intermancer.predictor.gene.logic.SingleChannelSwitchLG;
@@ -18,7 +20,8 @@ import com.intermancer.predictor.gene.operation.MultiplicationOG;
 //import com.intermancer.predictor.gene.operation.PowerOG;
 import com.intermancer.predictor.gene.operation.SubtractionOG;
 import com.intermancer.predictor.gene.transform.AbsoluteValueTG;
-//import com.intermancer.predictor.gene.transform.CeilingTG;
+import com.intermancer.predictor.gene.transform.CeilingTG;
+import com.intermancer.predictor.gene.transform.FilterTG;
 import com.intermancer.predictor.gene.transform.FloorTG;
 //import com.intermancer.predictor.gene.transform.Logarithm10TG;
 //import com.intermancer.predictor.gene.transform.LogarithmTG;
@@ -45,13 +48,12 @@ public class DefaultGeneFactory implements GeneFactory {
 		createOperationGenes();
 		createTransformGenes();
 		createWindowGenes();
-//		createLogicGenes();
+		createLogicGenes();
 	}
 
-//	private void createLogicGenes() {
-//		genes.add(new SingleChannelSwitchLG());
-//		genes.add(new ComparisonSwitchLG());
-//	}
+	private void createLogicGenes() {
+		genes.add(new SwitchLG());
+	}
 
 	private void createConstantGenes() {
 		genes.add(new AdditionCG());
@@ -59,9 +61,7 @@ public class DefaultGeneFactory implements GeneFactory {
 		MultiplicationCG multiply = new MultiplicationCG();
 		multiply.setConstant(1.1);
 		genes.add(multiply);
-//		PowerCG power = new PowerCG();
-//		power.setConstant(1.1);
-//		genes.add(power);
+		genes.add(new ExponentialCG(1.1));
 	}
 
 	private void createOperationGenes() {
@@ -69,18 +69,18 @@ public class DefaultGeneFactory implements GeneFactory {
 		genes.add(new DivisionOG());
 		genes.add(new ModulusOG());
 		genes.add(new MultiplicationOG());
-//		genes.add(new PowerOG());
 		genes.add(new SubtractionOG());
 	}
 
 	private void createTransformGenes() {
 		genes.add(new AbsoluteValueTG());
-//		genes.add(new CeilingTG());
+		genes.add(new CeilingTG());
 		genes.add(new FloorTG());
 //		genes.add(new Logarithm10TG());
 //		genes.add(new LogarithmTG());
 		genes.add(new RoundTG());
 		genes.add(new SignContinuityTG());
+		genes.add(new FilterTG());
 //		genes.add(new SineTG());
 	}
 

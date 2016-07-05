@@ -1,11 +1,13 @@
 package com.intermancer.predictor.mutation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.intermancer.predictor.gene.Chromosome;
-import com.intermancer.predictor.gene.Gene;
 
+/**
+ * This very basic ChromosomeFactory just returns a Chromosome with three random Genes.
+ * 
+ * @author NolaFryar
+ *
+ */
 public class DefaultChromosomeFactory implements ChromosomeFactory {
 	
 	GeneFactory geneFactory = new DefaultGeneFactory();
@@ -13,6 +15,8 @@ public class DefaultChromosomeFactory implements ChromosomeFactory {
 	@Override
 	public Chromosome getChromosome() {
 		Chromosome chromosome = new Chromosome();
+		chromosome.addGene(geneFactory.getGene());
+		chromosome.addGene(geneFactory.getGene());
 		chromosome.addGene(geneFactory.getGene());
 		return chromosome;
 	}
@@ -25,17 +29,4 @@ public class DefaultChromosomeFactory implements ChromosomeFactory {
 		this.geneFactory = geneFactory;
 	}
 	
-	@Override
-	public List<Chromosome> getChromosomes() {
-		List<Chromosome> chromosomes = new ArrayList<Chromosome>();
-		if(geneFactory instanceof DefaultGeneFactory) {
-			for(Gene gene : ((DefaultGeneFactory)geneFactory).getGenes()) {
-				Chromosome chromosome = new Chromosome();
-				chromosome.addGene(gene);
-				chromosomes.add(chromosome);
-			}
-		}
-		return chromosomes;
-	}
-
 }

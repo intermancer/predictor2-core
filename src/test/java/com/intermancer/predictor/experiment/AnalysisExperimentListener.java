@@ -26,7 +26,6 @@ public class AnalysisExperimentListener implements ExperimentListener {
 
 	@Override
 	public void processExperimentCycleResult(ExperimentCycleResult cycleResult, Experiment experiment) {
-		experimentResult.incrementCycles();
 		if (cycleResult.isParentWasReplaced()) {
 			experimentResult.incrementImprovementCycles();
 		}

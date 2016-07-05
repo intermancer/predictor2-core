@@ -13,6 +13,7 @@ import com.intermancer.predictor.data.Quantum;
 import com.intermancer.predictor.data.QuantumConsumerTest;
 import com.intermancer.predictor.gene.constant.AbstractConstantGene;
 import com.intermancer.predictor.gene.constant.AdditionCG;
+import com.intermancer.predictor.gene.constant.ExponentialCG;
 import com.intermancer.predictor.gene.constant.ModulusCG;
 import com.intermancer.predictor.gene.constant.MultiplicationCG;
 import com.intermancer.predictor.mutation.DefaultMutationAssistant;
@@ -71,6 +72,14 @@ public class ConstantGeneTest extends QuantumConsumerTest {
 		((AbstractConstantGene) testGene).setNegative(true);
 		feed();
 		assertEquals(new Double(0.5), quantum.getChannel(1).getValue());
+	}
+	
+	@Test
+	public void testExponential() {
+		testGene = new ExponentialCG(3);
+		testGene.init();
+		feed();
+		assertEquals(new Double(512), quantum.getChannel(1).getValue());
 	}
 
 	@Test

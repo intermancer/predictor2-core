@@ -191,6 +191,7 @@ public class ExperimentPrimeRunner implements Runnable {
 	public synchronized void startExperiment() throws Exception {
 		logger.debug("Starting experiment run");
 		ExperimentResult experimentResult = new ExperimentResult();
+		experimentResult.setCycles(cycles);
 		experimentResult.setStartHighScore(getOrganismStore().getHighestScore());
 		experimentResult.setStartLowScore(getOrganismStore().getLowestScore());
 		long millisStart = System.currentTimeMillis();
@@ -204,6 +205,7 @@ public class ExperimentPrimeRunner implements Runnable {
 				parentsReplaced++;
 			}
 			lastExperimentCycleResult = experimentCycleResult;
+			experimentResult.setIteration(iteration);
 		}
 		
 		experimentResult.setImprovementCycles(parentsReplaced);
