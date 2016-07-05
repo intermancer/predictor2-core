@@ -3,9 +3,12 @@ package com.intermancer.predictor.experiment;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 
 import com.intermancer.predictor.evaluator.PredictiveEvaluator;
@@ -23,9 +26,12 @@ import com.intermancer.predictor.organism.store.OrganismStore;
 
 public class ExperimentPrimeRunner implements Runnable {
 	
+	private static final Logger logger = LogManager.getLogger(ExperimentPrimeRunner.class);
+	
 	protected static final String DEVELOPMENT_DATA_PATH = "com/intermancer/predictor/test/data/sp500-ascii/GSPC.TXT";
-	protected static final int DEFAULT_PREDICTIVE_WINDOW_SIZE = 4;
-	private static final int DEFAULT_NUMBER_OF_MUTATIONS_FOR_INIT = 5;
+	public static final int DEFAULT_PREDICTIVE_WINDOW_SIZE = 4;
+	public static final int DEFAULT_NUMBER_OF_MUTATIONS_FOR_INIT = 5;
+	public static final int DEFAULT_NUMBER_OF_CYCLES = 10000;
 	
 	private Feeder feeder;
 	private Experiment experiment;
@@ -78,7 +84,7 @@ public class ExperimentPrimeRunner implements Runnable {
 			listener.initializeExperimentListener(experiment);
 		}
 		
-		cycles = 1;
+		cycles = DEFAULT_NUMBER_OF_CYCLES;
 		continueExperimenting = false;
 	}
 
@@ -177,17 +183,21 @@ public class ExperimentPrimeRunner implements Runnable {
 		try {
 			startExperiment();
 		} catch (Exception ex) {
-			// Nothing for now
+			logger.error("There was an exception in running the experiment on a background thread.", 
+					ex);
 		}
 	}
 
 	public synchronized void startExperiment() throws Exception {
+		logger.debug("Starting experiment run");
 		ExperimentResult experimentResult = new ExperimentResult();
 		experimentResult.setStartHighScore(getOrganismStore().getHighestScore());
 		experimentResult.setStartLowScore(getOrganismStore().getLowestScore());
 		long millisStart = System.currentTimeMillis();
 		
 		int parentsReplaced = 0;
+		logger.debug("cycles:{}", cycles);
+		logger.debug("continueExperimenting:{}", continueExperimenting);
 		for (iteration = 0; (iteration < cycles) || continueExperimenting; iteration++) {
 			ExperimentCycleResult experimentCycleResult = experiment.runExperimentCycle();
 			if (experimentCycleResult.isParentWasReplaced()) {

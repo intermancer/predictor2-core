@@ -61,6 +61,9 @@ public abstract class AbstractGene implements Gene {
 		boolean matches = true;
 		if(this.getClass().equals(obj.getClass())) {
 			AbstractGene gene = (AbstractGene) obj;
+			if (getOffsets().length != gene.getOffsets().length) {
+				return false;
+			}
 			for(int i = 0; i < getOffsets().length; i++) {
 				if(getOffsets()[i] != gene.getOffsets()[i]) {
 					matches = false;

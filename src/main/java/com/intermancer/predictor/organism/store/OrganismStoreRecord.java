@@ -63,4 +63,23 @@ public class OrganismStoreRecord {
 		return index;
 	}
 
+	@Override
+	public int hashCode() {
+		int sum = id.intValue() + organism.hashCode();
+		return sum;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof OrganismStoreRecord) {
+			OrganismStoreRecord other = (OrganismStoreRecord) obj;
+			boolean idsEqual = ((id == null) && (other.id == null))
+					|| ((id != null) && (id.equals(other.id)));
+			boolean organismsEqual = ((organism == null) && (other.organism == null))
+					|| ((organism != null) && (organism.equals(other.organism)));
+			return idsEqual && organismsEqual;
+		}
+		return false;
+	}
+
 }
