@@ -2,6 +2,7 @@ package com.intermancer.predictor.data;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -10,8 +11,12 @@ import com.intermancer.predictor.data.Channel;
 import com.intermancer.predictor.data.ConsumeResponse;
 import com.intermancer.predictor.data.Quantum;
 import com.intermancer.predictor.data.QuantumConsumer;
+import com.intermancer.predictor.gene.Chromosome;
 import com.intermancer.predictor.gene.Gene;
+import com.intermancer.predictor.gene.constant.AdditionCG;
 import com.intermancer.predictor.mutation.MutationCommand;
+import com.intermancer.predictor.organism.BaseOrganism;
+import com.intermancer.predictor.organism.Organism;
 
 public class QuantumConsumerTest {
 
@@ -67,4 +72,26 @@ public class QuantumConsumerTest {
 		return null;
 	}
 
+	protected Organism createOrganism(List<Gene> genes) {
+		BaseOrganism organism = new BaseOrganism();
+		
+		for(Gene gene : genes) {
+			Chromosome chromosome = new Chromosome();
+			chromosome.addGene(gene);
+			organism.addChromosome(chromosome);
+		}
+		
+		return organism;
+	}
+	
+	protected Organism getSimpleOrganism(int constant) {
+		List<Gene> genes = new ArrayList<Gene>();
+		genes.add(new AdditionCG(constant));
+		return createOrganism(genes);
+	}
+
+	protected Organism getSimpleOrganism() {
+		return getSimpleOrganism(1);
+	}
+	
 }

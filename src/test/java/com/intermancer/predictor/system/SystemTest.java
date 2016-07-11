@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.core.io.ClassPathResource;
 
+import com.intermancer.predictor.data.QuantumConsumerTest;
 import com.intermancer.predictor.evaluator.PredictiveEvaluator;
 import com.intermancer.predictor.feeder.BufferedFeeder;
 import com.intermancer.predictor.feeder.Feeder;
@@ -22,7 +23,7 @@ import com.intermancer.predictor.organism.store.OrganismStoreRecord;
 import com.intermancer.predictor.organism.store.StoreFullException;
 
 
-public class SystemTest {
+public class SystemTest extends QuantumConsumerTest {
 
 	protected static final int WATCH_CHANNEL_OFFSET = 4;
 	protected static final int LOOK_AHEAD = 5;
@@ -50,28 +51,6 @@ public class SystemTest {
 		return feeder;
 	}
 
-	protected Organism createOrganism(List<Gene> genes) {
-		BaseOrganism organism = new BaseOrganism();
-		
-		for(Gene gene : genes) {
-			Chromosome chromosome = new Chromosome();
-			chromosome.addGene(gene);
-			organism.addChromosome(chromosome);
-		}
-		
-		return organism;
-	}
-	
-	protected Organism getSimpleOrganism(int constant) {
-		List<Gene> genes = new ArrayList<Gene>();
-		genes.add(new AdditionCG(constant));
-		return createOrganism(genes);
-	}
-
-	protected Organism getSimpleOrganism() {
-		return getSimpleOrganism(1);
-	}
-	
 	protected OrganismStoreRecord getSimpleOrganismStoreRecord(int constant, double score) {
 		return new OrganismStoreRecord(score, getSimpleOrganism(constant));
 	}
