@@ -53,30 +53,12 @@ public class ExperimentPrimeRunner implements Runnable {
 	public void init() throws Exception {
 		
 		experiment = new DefaultExperiment();
-		
-		Reader fileReader = getFileReader(DEVELOPMENT_DATA_PATH);
-		feeder = new SimpleRF(fileReader);
-		feeder = new BufferedFeeder(feeder);
-
-		PredictiveEvaluator evaluator = new PredictiveEvaluator();
-		evaluator.setPredictiveWindowSize(DEFAULT_PREDICTIVE_WINDOW_SIZE);
-		feeder.addFeedCycleListener(evaluator);
-
-		experiment.setFeeder(feeder);
-		
-		breedStrategy = new DefaultBreedStrategy();
-		breedStrategy = new MutationBreedStrategyWrapper(breedStrategy, DEFAULT_NUMBER_OF_MUTATIONS_FOR_INIT,
-				new DefaultMutationAssistant(), new DefaultMutationContext());
-		experiment.setBreedStrategy(breedStrategy);
-		
-		organismStore = new InMemoryQuickAndDirtyOrganismStore();
-		experiment.setOrganismStore(organismStore);
-		
-		experimentStrategy = new ExperimentPrimeStrategy(breedStrategy, feeder);
-		experiment.setExperimentStrategy(experimentStrategy);
-
-		DefaultOrganismStoreInitializer.fillStore(organismStore, feeder, breedStrategy);
-		
+		setUpFeeder();
+		setUpEvaluator();
+		setUpBreeder();
+		setUpOrganismStore();
+		setUpExperimentStrategy();
+		experiment.setListeners(listeners);
 		experiment.init();
 		
 		for (ExperimentListener listener : listeners) {
@@ -85,6 +67,37 @@ public class ExperimentPrimeRunner implements Runnable {
 		
 		cycles = DEFAULT_NUMBER_OF_CYCLES;
 		continueExperimenting = false;
+	}
+
+	private void setUpExperimentStrategy() {
+		experimentStrategy = new ExperimentPrimeStrategy(breedStrategy, feeder);
+		experiment.setExperimentStrategy(experimentStrategy);
+	}
+
+	private void setUpOrganismStore() throws Exception {
+		organismStore = new InMemoryQuickAndDirtyOrganismStore();
+		experiment.setOrganismStore(organismStore);
+		DefaultOrganismStoreInitializer.fillStore(organismStore, feeder, breedStrategy);
+	}
+
+	private void setUpBreeder() {
+		breedStrategy = new DefaultBreedStrategy();
+		breedStrategy = new MutationBreedStrategyWrapper(breedStrategy, DEFAULT_NUMBER_OF_MUTATIONS_FOR_INIT,
+				new DefaultMutationAssistant(), new DefaultMutationContext());
+		experiment.setBreedStrategy(breedStrategy);
+	}
+
+	private void setUpEvaluator() {
+		PredictiveEvaluator evaluator = new PredictiveEvaluator();
+		evaluator.setPredictiveWindowSize(DEFAULT_PREDICTIVE_WINDOW_SIZE);
+		feeder.addFeedCycleListener(evaluator);
+	}
+
+	private void setUpFeeder() {
+		Reader fileReader = getFileReader(DEVELOPMENT_DATA_PATH);
+		feeder = new SimpleRF(fileReader);
+		feeder = new BufferedFeeder(feeder);
+		experiment.setFeeder(feeder);
 	}
 
 	protected Reader getFileReader(String resourceClasspath) {
@@ -108,7 +121,6 @@ public class ExperimentPrimeRunner implements Runnable {
 
 	public ExperimentCycleResult runExperimentCycle() throws Exception {
 		ExperimentCycleResult cycleResult = experiment.runExperimentCycle();
-		listenersProcessExperimentCycleResult(cycleResult);
 		return cycleResult;
 	}
 	
@@ -116,12 +128,6 @@ public class ExperimentPrimeRunner implements Runnable {
 		init();
 		for (int i = 0; i < context.getNumberOfCycles(); i++) {
 			runExperimentCycle();
-		}
-	}
-
-	private void listenersProcessExperimentCycleResult(ExperimentCycleResult cycleResult) {
-		for (ExperimentListener listener : listeners) {
-			listener.processExperimentCycleResult(cycleResult, experiment);
 		}
 	}
 

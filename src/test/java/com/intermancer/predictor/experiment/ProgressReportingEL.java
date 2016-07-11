@@ -16,8 +16,7 @@ public class ProgressReportingEL implements ExperimentListener {
 	}
 
 	@Override
-	public void processExperimentCycleResult(ExperimentCycleResult cycleResult, 
-			Experiment experiment) {
+	public void processExperimentCycleResult(ExperimentCycleResult cycleResult) {
 		count++;
 		if ((count % reportingIncrement) == 0) {
 			System.out.print(".");

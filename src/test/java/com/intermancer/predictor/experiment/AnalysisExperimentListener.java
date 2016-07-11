@@ -13,6 +13,7 @@ public class AnalysisExperimentListener implements ExperimentListener {
 	private ExperimentResult experimentResult = new ExperimentResult();
 	private long startTimeInMillis;
 	private long endTimeInMillis;
+	private Experiment experiment;
 
 	public AnalysisExperimentListener() {
 
@@ -20,12 +21,13 @@ public class AnalysisExperimentListener implements ExperimentListener {
 	
 	@Override
 	public void initializeExperimentListener(Experiment experiment) {
+		this.experiment = experiment;
 		getStartingStats(experiment);
 		startTimeInMillis = System.currentTimeMillis();
 	}
 
 	@Override
-	public void processExperimentCycleResult(ExperimentCycleResult cycleResult, Experiment experiment) {
+	public void processExperimentCycleResult(ExperimentCycleResult cycleResult) {
 		if (cycleResult.isParentWasReplaced()) {
 			experimentResult.incrementImprovementCycles();
 		}

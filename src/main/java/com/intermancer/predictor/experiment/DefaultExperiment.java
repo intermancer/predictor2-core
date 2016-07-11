@@ -19,9 +19,18 @@ public class DefaultExperiment implements Experiment {
 
 	private OrganismStore organismStore;
 
+	private List<ExperimentListener> listeners;
+	
+	public DefaultExperiment() {
+		listeners = new ArrayList<ExperimentListener>();
+	}
+
 	@Override
 	public void init() throws Exception {
 		feeder.init();
+		for (ExperimentListener listener : listeners) {
+			listener.initializeExperimentListener(this);
+		}
 
 		organismStore.analyze();
 	}
@@ -36,6 +45,9 @@ public class DefaultExperiment implements Experiment {
 		result.setParentWasReplaced(
 				experimentStrategy.mergeIntoPopulation(ancestors, children, organismStore));
 		result.setChildren(children);
+		for (ExperimentListener listener : listeners) {
+			listener.processExperimentCycleResult(result);
+		}
 		return result;
 	}
 
@@ -82,6 +94,11 @@ public class DefaultExperiment implements Experiment {
 	@Override
 	public void setOrganismStore(OrganismStore organismStore) {
 		this.organismStore = organismStore;
+	}
+
+	@Override
+	public void setListeners(List<ExperimentListener> listeners) {
+		this.listeners = listeners;
 	}
 
 }

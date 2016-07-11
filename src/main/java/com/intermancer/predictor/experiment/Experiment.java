@@ -1,5 +1,7 @@
 package com.intermancer.predictor.experiment;
 
+import java.util.List;
+
 import com.intermancer.predictor.feeder.Feeder;
 import com.intermancer.predictor.organism.breed.BreedStrategy;
 import com.intermancer.predictor.organism.store.OrganismStore;
@@ -13,5 +15,6 @@ public interface Experiment {
 	void setBreedStrategy(BreedStrategy breedStrategy);
 	void setOrganismStore(OrganismStore organismStore);
 	void setExperimentStrategy(ExperimentStrategy experimentStrategy);
+	void setListeners(List<ExperimentListener> listeners);
 
 }
