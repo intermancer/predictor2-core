@@ -8,6 +8,7 @@ public class ExperimentCycleResult {
 	
 	private List<OrganismStoreRecord> ancestors;
 	private List<OrganismStoreRecord> children;
+	private List<OrganismStoreRecord> finals;
 	private boolean parentWasReplaced = false;
 	
 	public List<OrganismStoreRecord> getAncestors() {
@@ -26,6 +27,14 @@ public class ExperimentCycleResult {
 		this.children = children;
 	}
 	
+	public List<OrganismStoreRecord> getFinals() {
+		return finals;
+	}
+
+	public void setFinals(List<OrganismStoreRecord> finals) {
+		this.finals = finals;
+	}
+
 	public boolean isParentWasReplaced() {
 		return parentWasReplaced;
 	}

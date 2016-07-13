@@ -39,12 +39,17 @@ public class DefaultExperiment implements Experiment {
 	public ExperimentCycleResult runExperimentCycle() throws Exception {
 		init();
 		ExperimentCycleResult result = new ExperimentCycleResult();
-		List<OrganismStoreRecord> ancestors = experimentStrategy.getAncestors(organismStore);
-		result.setAncestors(ancestors);
-		List<OrganismStoreRecord> children = experimentStrategy.generateNextGeneration(ancestors);
-		result.setParentWasReplaced(
-				experimentStrategy.mergeIntoPopulation(ancestors, children, organismStore));
-		result.setChildren(children);
+		result.setAncestors(experimentStrategy.getAncestors(organismStore));
+		result.setChildren(experimentStrategy.generateNextGeneration(result.getAncestors()));
+		result.setFinals(experimentStrategy.mergeIntoPopulation(result.getAncestors(), result.getChildren(), organismStore));
+		boolean parentWasReplaced = false;
+		for (OrganismStoreRecord record : result.getFinals()) {
+			if (result.getChildren().contains(record)) {
+				parentWasReplaced = true;
+				break;
+			}
+		}
+		result.setParentWasReplaced(parentWasReplaced);
 		for (ExperimentListener listener : listeners) {
 			listener.processExperimentCycleResult(result);
 		}

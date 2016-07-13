@@ -76,17 +76,16 @@ public class ExperimentPrimeStrategy implements ExperimentStrategy {
 	}
 
 	@Override
-	public boolean mergeIntoPopulation(List<OrganismStoreRecord> ancestors, List<OrganismStoreRecord> children,
+	public List<OrganismStoreRecord> mergeIntoPopulation(List<OrganismStoreRecord> ancestors, List<OrganismStoreRecord> children,
 			OrganismStore store) throws StoreFullException {
 		List<OrganismStoreRecord> allOrganisms = new ArrayList<OrganismStoreRecord>();
 		allOrganisms.addAll(children);
 		allOrganisms.addAll(ancestors);
 		Collections.sort(allOrganisms, OrganismStoreRecord.COMPARATOR);
 
-		boolean parentReplaced = false;
-
 		List<OrganismStoreRecord> recordsToRemove = new ArrayList<OrganismStoreRecord>();
 		List<OrganismStoreRecord> recordsToAdd = new ArrayList<OrganismStoreRecord>();
+		List<OrganismStoreRecord> finals = new ArrayList<OrganismStoreRecord>();
 
 		for (int i = 0; i < allOrganisms.size(); i++) {
 			OrganismStoreRecord record = allOrganisms.get(i);
@@ -94,10 +93,10 @@ public class ExperimentPrimeStrategy implements ExperimentStrategy {
 				if (record.getId() == null) {
 					recordsToAdd.add(record);
 				}
+				finals.add(record);
 			} else {
 				if (record.getId() != null) {
 					recordsToRemove.add(record);
-					parentReplaced = true;
 				}
 			}
 		}
@@ -111,7 +110,8 @@ public class ExperimentPrimeStrategy implements ExperimentStrategy {
 				store.addRecord(record);
 			} catch (StoreFullException ex) {
 				try {
-					// This happened when the two ancestors were the same record.
+					// This happened when the two ancestors were the same
+					// record.
 					ArrayList<Object> items = new ArrayList<Object>();
 					items.add("==========ancestors==========");
 					items.add(ancestors);
@@ -132,7 +132,7 @@ public class ExperimentPrimeStrategy implements ExperimentStrategy {
 		}
 
 		store.analyze();
-		return parentReplaced;
+		return finals;
 	}
 
 	public BreedStrategy getBreedStrategy() {

@@ -10,6 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.MetricRegistry;
 import com.intermancer.predictor.evaluator.PredictiveEvaluator;
 import com.intermancer.predictor.feeder.BufferedFeeder;
 import com.intermancer.predictor.feeder.Feeder;
@@ -26,11 +29,13 @@ import com.intermancer.predictor.organism.store.OrganismStore;
 public class ExperimentPrimeRunner implements Runnable {
 	
 	private static final Logger logger = LogManager.getLogger(ExperimentPrimeRunner.class);
+	private static final MetricRegistry metricRegistry = new MetricRegistry();
 	
 	protected static final String DEVELOPMENT_DATA_PATH = "com/intermancer/predictor/test/data/sp500-ascii/GSPC.TXT";
 	public static final int DEFAULT_PREDICTIVE_WINDOW_SIZE = 4;
 	public static final int DEFAULT_NUMBER_OF_MUTATIONS_FOR_INIT = 5;
 	public static final int DEFAULT_NUMBER_OF_CYCLES = 10000;
+	public static final String CYCLES_METER_NAME = "cycles";
 	
 	private Feeder feeder;
 	private Experiment experiment;
@@ -45,9 +50,27 @@ public class ExperimentPrimeRunner implements Runnable {
 	private ExperimentCycleResult lastExperimentCycleResult;
 	private boolean continueExperimenting;
 	private ExperimentResult lastExperimentResult;
+	private int organismSize;
+	
+	private Meter cyclesMeter;
 	
 	public ExperimentPrimeRunner() {
 		listeners = new ArrayList<ExperimentListener>();
+		
+		organismSize = 0;
+
+		if (!metricRegistry.getNames().contains(CYCLES_METER_NAME)) {
+			cyclesMeter = metricRegistry.meter(CYCLES_METER_NAME);
+			metricRegistry.register(MetricRegistry.name(ExperimentPrimeRunner.class, "organism.gene.size"),
+					new Gauge<Integer>() {
+						@Override
+						public Integer getValue() {
+							return new Integer(organismSize);
+						}
+					});
+		} else {
+			cyclesMeter = metricRegistry.getMeters().get(CYCLES_METER_NAME);
+		}
 	}
 
 	public void init() throws Exception {
@@ -195,10 +218,7 @@ public class ExperimentPrimeRunner implements Runnable {
 
 	public synchronized void startExperiment() throws Exception {
 		logger.debug("Starting experiment run");
-		ExperimentResult experimentResult = new ExperimentResult();
-		experimentResult.setCycles(cycles);
-		experimentResult.setStartHighScore(getOrganismStore().getHighestScore());
-		experimentResult.setStartLowScore(getOrganismStore().getLowestScore());
+		ExperimentResult experimentResult = initializeExperimentResult();
 		long millisStart = System.currentTimeMillis();
 		
 		int parentsReplaced = 0;
@@ -211,15 +231,29 @@ public class ExperimentPrimeRunner implements Runnable {
 			}
 			lastExperimentCycleResult = experimentCycleResult;
 			experimentResult.setIteration(iteration);
+			cyclesMeter.mark();
 		}
 		
+		long millisEnd = System.currentTimeMillis();
+		finalizeExperimentResult(experimentResult, millisStart, parentsReplaced, millisEnd);
+		
+		lastExperimentResult = experimentResult;
+	}
+
+	private void finalizeExperimentResult(ExperimentResult experimentResult, long millisStart, int parentsReplaced,
+			long millisEnd) {
+		experimentResult.setDurationInMillis(millisEnd - millisStart);
 		experimentResult.setImprovementCycles(parentsReplaced);
 		experimentResult.setFinishHighScore(getOrganismStore().getHighestScore());
 		experimentResult.setFinishLowScore(getOrganismStore().getLowestScore());
-		long millisEnd = System.currentTimeMillis();
-		experimentResult.setDurationInMillis(millisEnd - millisStart);
-		
-		lastExperimentResult = experimentResult;
+	}
+
+	private ExperimentResult initializeExperimentResult() {
+		ExperimentResult experimentResult = new ExperimentResult();
+		experimentResult.setCycles(cycles);
+		experimentResult.setStartHighScore(getOrganismStore().getHighestScore());
+		experimentResult.setStartLowScore(getOrganismStore().getLowestScore());
+		return experimentResult;
 	}
 
 	public boolean isContinueExperimenting() {
