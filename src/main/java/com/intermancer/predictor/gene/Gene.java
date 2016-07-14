@@ -1,5 +1,7 @@
 package com.intermancer.predictor.gene;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.intermancer.predictor.data.QuantumConsumer;
 import com.intermancer.predictor.mutation.Mutable;
 
@@ -9,6 +11,7 @@ import com.intermancer.predictor.mutation.Mutable;
  * @author johnfryar
  * 
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=As.PROPERTY, property="classname")
 public interface Gene extends QuantumConsumer, Mutable {
 
 	/**
@@ -22,6 +25,5 @@ public interface Gene extends QuantumConsumer, Mutable {
 	 *         produce meaningful data.
 	 */
 	int getHungryCycles();
-	String getClassname();
 
 }

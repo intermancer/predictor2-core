@@ -108,11 +108,6 @@ public abstract class AbstractGene implements Gene {
 		return getValues()[getOffsets()[index]];
 	}
 
-	@Override
-	public String getClassname() {
-		return this.getClass().getName();
-	}
-	
 	public void setClassname(String classname) {
 		// This is here to make Jackson happy.
 	}

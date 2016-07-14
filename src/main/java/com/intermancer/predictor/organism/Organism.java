@@ -2,6 +2,8 @@ package com.intermancer.predictor.organism;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.intermancer.predictor.data.QuantumConsumer;
 import com.intermancer.predictor.gene.Chromosome;
 import com.intermancer.predictor.mutation.Mutable;
@@ -14,6 +16,8 @@ import com.intermancer.predictor.mutation.Mutable;
  * @author johnfryar
  * 
  */
+
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=As.PROPERTY, property="classname")
 public interface Organism extends QuantumConsumer, Mutable {
 
 	/**
