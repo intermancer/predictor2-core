@@ -2,3 +2,4 @@
 .project
 .settings/
 target/
+src/test/resources/com/intermancer/predictor/test/data/organisms/
