@@ -10,14 +10,14 @@ import com.intermancer.predictor.organism.store.OrganismStore;
  * @author JohnFryar
  *
  */
-public class AnalysisExperimentListener implements ExperimentListener {
+public class ExperimentAnalysisListener implements ExperimentListener {
 	
 	private ExperimentResult experimentResult;
 	private long startTimeInMillis;
 	private long endTimeInMillis;
 	private OrganismStore organismStore;
 
-	public AnalysisExperimentListener(OrganismStore organismStore) {
+	public ExperimentAnalysisListener(OrganismStore organismStore) {
 		this.organismStore = organismStore;
 	}
 	

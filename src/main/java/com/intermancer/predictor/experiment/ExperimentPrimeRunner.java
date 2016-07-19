@@ -10,9 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Meter;
-import com.codahale.metrics.MetricRegistry;
 import com.intermancer.predictor.evaluator.PredictiveEvaluator;
 import com.intermancer.predictor.feeder.BufferedFeeder;
 import com.intermancer.predictor.feeder.Feeder;
@@ -29,7 +26,6 @@ import com.intermancer.predictor.organism.store.OrganismStore;
 public class ExperimentPrimeRunner implements Runnable {
 	
 	private static final Logger logger = LogManager.getLogger(ExperimentPrimeRunner.class);
-	private static final MetricRegistry metricRegistry = new MetricRegistry();
 	
 	protected static final String DEVELOPMENT_DATA_PATH = "com/intermancer/predictor/test/data/sp500-ascii/GSPC.TXT";
 	public static final int DEFAULT_PREDICTIVE_WINDOW_SIZE = 4;
@@ -50,31 +46,13 @@ public class ExperimentPrimeRunner implements Runnable {
 	private ExperimentCycleResult lastExperimentCycleResult;
 	private boolean continueExperimenting;
 	private ExperimentResult lastExperimentResult;
-	private int organismSize;
+
 	private int maxStoreCapacity;
 	
-	private Meter cyclesMeter;
 	private String diskStorePath;
 	
 	public ExperimentPrimeRunner() {
 		listeners = new ArrayList<ExperimentListener>();
-		
-		organismSize = 0;
-
-		if (!metricRegistry.getNames().contains(CYCLES_METER_NAME)) {
-			cyclesMeter = metricRegistry.meter(CYCLES_METER_NAME);
-			
-			// This organismSize metric has not been fully implemented
-			metricRegistry.register(MetricRegistry.name(ExperimentPrimeRunner.class, "organism.gene.size"),
-					new Gauge<Integer>() {
-						@Override
-						public Integer getValue() {
-							return new Integer(organismSize);
-						}
-					});
-		} else {
-			cyclesMeter = metricRegistry.getMeters().get(CYCLES_METER_NAME);
-		}
 		
 		cycles = DEFAULT_NUMBER_OF_CYCLES;
 	}
@@ -241,7 +219,6 @@ public class ExperimentPrimeRunner implements Runnable {
 			}
 			lastExperimentCycleResult = experimentCycleResult;
 			experimentResult.setIteration(iteration);
-			cyclesMeter.mark();
 		}
 		
 		long millisEnd = System.currentTimeMillis();

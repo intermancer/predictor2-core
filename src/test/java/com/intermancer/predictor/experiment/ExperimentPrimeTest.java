@@ -76,7 +76,7 @@ public class ExperimentPrimeTest extends SystemTest {
 		experimentRunner.setMaxStoreCapacity(5);
 
 		experimentRunner.addExperimentListener(new ProgressReportingEL());
-		AnalysisExperimentListener analysisListener = new AnalysisExperimentListener(
+		ExperimentAnalysisListener analysisListener = new ExperimentAnalysisListener(
 				experimentRunner.getOrganismStore());
 		experimentRunner.addExperimentListener(analysisListener);
 		ExperimentContext context = new ExperimentContext();
