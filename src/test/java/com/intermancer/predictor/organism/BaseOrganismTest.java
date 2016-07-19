@@ -8,7 +8,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.intermancer.predictor.data.QuantumConsumerTest;
-import com.intermancer.predictor.gene.Chromosome;
 import com.intermancer.predictor.gene.Gene;
 import com.intermancer.predictor.gene.operation.AdditionOG;
 import com.intermancer.predictor.gene.operation.MultiplicationOG;
@@ -17,8 +16,6 @@ import com.intermancer.predictor.mutation.DefaultMutationContext;
 import com.intermancer.predictor.mutation.MutationCommand;
 
 public class BaseOrganismTest extends QuantumConsumerTest {
-	
-	private static final String TEST_ORGANISM_DIRECTORY = "src/test/resources/com/intermancer/predictor/test/data/organisms";
 	
 	private DefaultMutationAssistant mutationAssistant;
 	private DefaultMutationContext context;
