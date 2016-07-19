@@ -15,7 +15,7 @@ public class DefaultExperiment implements Experiment {
 
 	private Feeder feeder;
 	private BreedStrategy breedStrategy;
-	private ExperimentStrategy experimentStrategy;
+	private OrganismLifecycleStrategy experimentStrategy;
 
 	private OrganismStore organismStore;
 
@@ -87,12 +87,12 @@ public class DefaultExperiment implements Experiment {
 		this.breedStrategy = breedStrategy;
 	}
 
-	public ExperimentStrategy getExperimentStrategy() {
+	public OrganismLifecycleStrategy getExperimentStrategy() {
 		return experimentStrategy;
 	}
 
 	@Override
-	public void setExperimentStrategy(ExperimentStrategy experimentStrategy) {
+	public void setExperimentStrategy(OrganismLifecycleStrategy experimentStrategy) {
 		this.experimentStrategy = experimentStrategy;
 	}
 

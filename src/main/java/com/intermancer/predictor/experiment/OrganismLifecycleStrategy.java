@@ -6,7 +6,7 @@ import com.intermancer.predictor.organism.store.OrganismStore;
 import com.intermancer.predictor.organism.store.OrganismStoreRecord;
 import com.intermancer.predictor.organism.store.StoreFullException;
 
-public interface ExperimentStrategy {
+public interface OrganismLifecycleStrategy {
 
 	List<OrganismStoreRecord> getAncestors(OrganismStore store);
 

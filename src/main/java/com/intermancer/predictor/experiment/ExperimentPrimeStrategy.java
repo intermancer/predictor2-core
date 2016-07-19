@@ -16,7 +16,7 @@ import com.intermancer.predictor.organism.store.OrganismStore;
 import com.intermancer.predictor.organism.store.OrganismStoreRecord;
 import com.intermancer.predictor.organism.store.StoreFullException;
 
-public class ExperimentPrimeStrategy implements ExperimentStrategy {
+public class ExperimentPrimeStrategy implements OrganismLifecycleStrategy {
 
 	private static final Logger logger = LogManager.getLogger(ExperimentPrimeStrategy.class);
 	private final ObjectMapper mapper;

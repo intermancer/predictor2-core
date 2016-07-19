@@ -42,7 +42,7 @@ public class ExperimentPrimeRunner implements Runnable {
 	private Feeder feeder;
 	private Experiment experiment;
 	private BreedStrategy breedStrategy;
-	private ExperimentStrategy experimentStrategy;
+	private OrganismLifecycleStrategy experimentStrategy;
 	private OrganismStore organismStore;
 	
 	private List<ExperimentListener> listeners;
@@ -174,11 +174,11 @@ public class ExperimentPrimeRunner implements Runnable {
 		this.breedStrategy = breedStrategy;
 	}
 
-	public ExperimentStrategy getExperimentStrategy() {
+	public OrganismLifecycleStrategy getExperimentStrategy() {
 		return experimentStrategy;
 	}
 
-	public void setExperimentStrategy(ExperimentStrategy experimentStrategy) {
+	public void setExperimentStrategy(OrganismLifecycleStrategy experimentStrategy) {
 		this.experimentStrategy = experimentStrategy;
 	}
 

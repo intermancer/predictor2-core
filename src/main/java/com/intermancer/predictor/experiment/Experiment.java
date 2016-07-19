@@ -14,7 +14,7 @@ public interface Experiment {
 	void setFeeder(Feeder feeder);
 	void setBreedStrategy(BreedStrategy breedStrategy);
 	void setOrganismStore(OrganismStore organismStore);
-	void setExperimentStrategy(ExperimentStrategy experimentStrategy);
+	void setExperimentStrategy(OrganismLifecycleStrategy experimentStrategy);
 	void setListeners(List<ExperimentListener> listeners);
 
 }
