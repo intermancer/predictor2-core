@@ -38,7 +38,7 @@ public class ExperimentPrimeRunner implements Runnable {
 	public static final String CYCLES_METER_NAME = "cycles";
 	
 	private Feeder feeder;
-	private Experiment experiment;
+	private DefaultExperiment experiment;
 	private BreedStrategy breedStrategy;
 	private OrganismLifecycleStrategy experimentStrategy;
 	private OrganismStore organismStore;
@@ -51,6 +51,7 @@ public class ExperimentPrimeRunner implements Runnable {
 	private boolean continueExperimenting;
 	private ExperimentResult lastExperimentResult;
 	private int organismSize;
+	private int maxStoreCapacity;
 	
 	private Meter cyclesMeter;
 	private String diskStorePath;
@@ -74,6 +75,8 @@ public class ExperimentPrimeRunner implements Runnable {
 		} else {
 			cyclesMeter = metricRegistry.getMeters().get(CYCLES_METER_NAME);
 		}
+		
+		cycles = DEFAULT_NUMBER_OF_CYCLES;
 	}
 
 	public void init() throws Exception {
@@ -88,20 +91,23 @@ public class ExperimentPrimeRunner implements Runnable {
 		experiment.init();
 		
 		for (ExperimentListener listener : listeners) {
-			listener.initializeExperimentListener(experiment);
+			listener.initializeExperimentListener(experiment, organismStore);
 		}
 		
-		cycles = DEFAULT_NUMBER_OF_CYCLES;
 		continueExperimenting = false;
 	}
 
 	private void setUpExperimentStrategy() {
 		experimentStrategy = new ExperimentPrimeStrategy(breedStrategy, feeder);
-		experiment.setExperimentStrategy(experimentStrategy);
+		experiment.setOrganismLifecycleStrategy(experimentStrategy);
 	}
 
 	private void setUpOrganismStore() throws Exception {
-		organismStore = new InMemoryQuickAndDirtyOrganismStore();
+		InMemoryQuickAndDirtyOrganismStore myOrganismStore = new InMemoryQuickAndDirtyOrganismStore();
+		if (maxStoreCapacity > 0) {
+			myOrganismStore.setMaxSize(maxStoreCapacity);
+		}
+		this.organismStore = myOrganismStore;
 		experiment.setOrganismStore(organismStore);
 		DefaultOrganismStoreInitializer.fillStore(organismStore, feeder, breedStrategy, diskStorePath);
 	}
@@ -182,7 +188,7 @@ public class ExperimentPrimeRunner implements Runnable {
 		this.experimentStrategy = experimentStrategy;
 	}
 
-	public void setExperiment(Experiment experiment) {
+	public void setExperiment(DefaultExperiment experiment) {
 		this.experiment = experiment;
 	}
 
@@ -274,6 +280,14 @@ public class ExperimentPrimeRunner implements Runnable {
 
 	public void setDiskStorePath(String diskStorePath) {
 		this.diskStorePath = diskStorePath;
+	}
+
+	public int getMaxStoreCapacity() {
+		return maxStoreCapacity;
+	}
+
+	public void setMaxStoreCapacity(int maxStoreCapacity) {
+		this.maxStoreCapacity = maxStoreCapacity;
 	}
 	
 }

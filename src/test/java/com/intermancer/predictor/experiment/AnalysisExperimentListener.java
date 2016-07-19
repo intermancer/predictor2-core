@@ -1,5 +1,7 @@
 package com.intermancer.predictor.experiment;
 
+import com.intermancer.predictor.organism.store.OrganismStore;
+
 /**
  * This ExperimentListener expects to watch an entire experiment, with a beginning and end.
  * Not appropriate in situations where the system is simply started and allowed to run for an
@@ -10,20 +12,21 @@ package com.intermancer.predictor.experiment;
  */
 public class AnalysisExperimentListener implements ExperimentListener {
 	
-	private ExperimentResult experimentResult = new ExperimentResult();
+	private ExperimentResult experimentResult;
 	private long startTimeInMillis;
 	private long endTimeInMillis;
-	private Experiment experiment;
+	private OrganismStore organismStore;
 
-	public AnalysisExperimentListener() {
-
+	public AnalysisExperimentListener(OrganismStore organismStore) {
+		this.organismStore = organismStore;
 	}
 	
 	@Override
-	public void initializeExperimentListener(Experiment experiment) {
-		this.experiment = experiment;
-		getStartingStats(experiment);
+	public void initializeExperimentListener(Experiment experiment, OrganismStore organismStore) {
 		startTimeInMillis = System.currentTimeMillis();
+		experimentResult = new ExperimentResult();
+		this.organismStore = organismStore;
+		getStartingStats();
 	}
 
 	@Override
@@ -33,19 +36,19 @@ public class AnalysisExperimentListener implements ExperimentListener {
 		}
 		
 		// Every experiment cycle could be the last.
-		getEndingStatistics(experiment);
+		getEndingStatistics();
 		endTimeInMillis = System.currentTimeMillis();
 		experimentResult.setDurationInMillis(endTimeInMillis - startTimeInMillis);
 	}
 
-	private void getStartingStats(Experiment experiment) {
-		experimentResult.setStartHighScore(experiment.getOrganismStore().getHighestScore());
-		experimentResult.setStartLowScore(experiment.getOrganismStore().getLowestScore());
+	private void getStartingStats() {
+		experimentResult.setStartHighScore(organismStore.getHighestScore());
+		experimentResult.setStartLowScore(organismStore.getLowestScore());
 	}
 
-	private void getEndingStatistics(Experiment experiment) {
-		experimentResult.setFinishHighScore(experiment.getOrganismStore().getHighestScore());
-		experimentResult.setFinishLowScore(experiment.getOrganismStore().getLowestScore());
+	private void getEndingStatistics() {
+		experimentResult.setFinishHighScore(organismStore.getHighestScore());
+		experimentResult.setFinishLowScore(organismStore.getLowestScore());
 	}
 
 	public ExperimentResult getExperimentResult() {

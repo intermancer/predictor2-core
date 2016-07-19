@@ -15,7 +15,7 @@ public class DefaultExperiment implements Experiment {
 
 	private Feeder feeder;
 	private BreedStrategy breedStrategy;
-	private OrganismLifecycleStrategy experimentStrategy;
+	private OrganismLifecycleStrategy organismLifecycleStrategy;
 
 	private OrganismStore organismStore;
 
@@ -29,7 +29,7 @@ public class DefaultExperiment implements Experiment {
 	public void init() throws Exception {
 		feeder.init();
 		for (ExperimentListener listener : listeners) {
-			listener.initializeExperimentListener(this);
+			listener.initializeExperimentListener(this, organismStore);
 		}
 
 		organismStore.analyze();
@@ -39,9 +39,9 @@ public class DefaultExperiment implements Experiment {
 	public ExperimentCycleResult runExperimentCycle() throws Exception {
 		init();
 		ExperimentCycleResult result = new ExperimentCycleResult();
-		result.setAncestors(experimentStrategy.getAncestors(organismStore));
-		result.setChildren(experimentStrategy.generateNextGeneration(result.getAncestors()));
-		result.setFinals(experimentStrategy.mergeIntoPopulation(result.getAncestors(), result.getChildren(), organismStore));
+		result.setAncestors(organismLifecycleStrategy.getAncestors(organismStore));
+		result.setChildren(organismLifecycleStrategy.generateNextGeneration(result.getAncestors()));
+		result.setFinals(organismLifecycleStrategy.mergeIntoPopulation(result.getAncestors(), result.getChildren(), organismStore));
 		boolean parentWasReplaced = false;
 		for (OrganismStoreRecord record : result.getFinals()) {
 			if (result.getChildren().contains(record)) {
@@ -56,7 +56,6 @@ public class DefaultExperiment implements Experiment {
 		return result;
 	}
 
-	@Override
 	public OrganismStore getOrganismStore() {
 		return organismStore;
 	}
@@ -73,7 +72,6 @@ public class DefaultExperiment implements Experiment {
 		return feeder;
 	}
 
-	@Override
 	public void setFeeder(Feeder feeder) {
 		this.feeder = feeder;
 	}
@@ -82,26 +80,22 @@ public class DefaultExperiment implements Experiment {
 		return breedStrategy;
 	}
 
-	@Override
 	public void setBreedStrategy(BreedStrategy breedStrategy) {
 		this.breedStrategy = breedStrategy;
 	}
 
-	public OrganismLifecycleStrategy getExperimentStrategy() {
-		return experimentStrategy;
+	public OrganismLifecycleStrategy getOrganismLifecycleStrategy() {
+		return organismLifecycleStrategy;
 	}
 
-	@Override
-	public void setExperimentStrategy(OrganismLifecycleStrategy experimentStrategy) {
-		this.experimentStrategy = experimentStrategy;
+	public void setOrganismLifecycleStrategy(OrganismLifecycleStrategy organismLifecycleStrategy) {
+		this.organismLifecycleStrategy = organismLifecycleStrategy;
 	}
 
-	@Override
 	public void setOrganismStore(OrganismStore organismStore) {
 		this.organismStore = organismStore;
 	}
 
-	@Override
 	public void setListeners(List<ExperimentListener> listeners) {
 		this.listeners = listeners;
 	}
