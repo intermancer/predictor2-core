@@ -13,15 +13,13 @@ import com.intermancer.predictor.evaluator.PredictiveEvaluator;
 import com.intermancer.predictor.feeder.BufferedFeeder;
 import com.intermancer.predictor.feeder.Feeder;
 import com.intermancer.predictor.feeder.SimpleRF;
-import com.intermancer.predictor.gene.Chromosome;
 import com.intermancer.predictor.gene.Gene;
-import com.intermancer.predictor.gene.constant.AdditionCG;
-import com.intermancer.predictor.organism.BaseOrganism;
+import com.intermancer.predictor.gene.constant.MultiplicationCG;
+import com.intermancer.predictor.gene.window.MovingSumWG;
 import com.intermancer.predictor.organism.Organism;
 import com.intermancer.predictor.organism.store.OrganismStore;
 import com.intermancer.predictor.organism.store.OrganismStoreRecord;
 import com.intermancer.predictor.organism.store.StoreFullException;
-
 
 public class SystemTest extends QuantumConsumerTest {
 
@@ -64,6 +62,17 @@ public class SystemTest extends QuantumConsumerTest {
 			store.addRecord(storeRecord);
 			constant++;
 		}
+	}
+
+	public Organism getMovingAverage(int windowSize) {
+		return getMovingAverage(-1, windowSize);
+	}
+
+	public Organism getMovingAverage(int offset, int windowSize) {
+		List<Gene> genes = new ArrayList<Gene>();
+		genes.add(new MovingSumWG(offset, windowSize));
+		genes.add(new MultiplicationCG(windowSize, false, true));
+		return createOrganism(genes);
 	}
 
 }

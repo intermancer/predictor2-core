@@ -1,17 +1,24 @@
 package com.intermancer.predictor.organism.store;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intermancer.predictor.feeder.Feeder;
 import com.intermancer.predictor.gene.Chromosome;
 import com.intermancer.predictor.gene.Gene;
-import com.intermancer.predictor.gene.constant.MultiplicationCG;
-import com.intermancer.predictor.gene.window.MovingSumWG;
 import com.intermancer.predictor.mutation.DefaultGeneFactory;
 import com.intermancer.predictor.mutation.GeneFactory;
 import com.intermancer.predictor.organism.BaseOrganism;
@@ -22,6 +29,7 @@ import com.intermancer.predictor.organism.breed.BreedStrategy;
 public class DefaultOrganismStoreInitializer extends DefaultOrganismBuilder {
 
 	private static Logger logger = LogManager.getLogger(DefaultOrganismStoreInitializer.class);
+	private static final Charset CHARSET = Charset.forName("US-ASCII");
 
 	/**
 	 * These organisms came out of some practice runs. There is nothing
@@ -35,25 +43,14 @@ public class DefaultOrganismStoreInitializer extends DefaultOrganismBuilder {
 
 	private static List<Organism> loadedOrganisms;
 
-	public static Organism getMovingAverage(int windowSize) {
-		return getMovingAverage(-1, windowSize);
-	}
+	private static ObjectMapper objectMapper;
 
-	public static Organism getMovingAverage(int offset, int windowSize) {
-		List<Gene> genes = new ArrayList<Gene>();
-		genes.add(new MovingSumWG(offset, windowSize));
-		genes.add(new MultiplicationCG(windowSize, false, true));
-		return getOrganism(genes);
-	}
-
-	public static void fillStore(OrganismStore organismStore, Feeder feeder, BreedStrategy breedStrategy)
-			throws Exception {
+	public static void fillStore(OrganismStore organismStore, Feeder feeder, BreedStrategy breedStrategy,
+			String diskStorePath) throws Exception {
 		try {
-			addMovingAverage(organismStore, feeder, 4);
-			addMovingAverage(organismStore, feeder, 7);
-			logger.debug("Finished moving average organisms");
 			addDescribedOrganisms(organismStore, feeder);
 			logger.debug("Finished described organisms");
+			loadDiskStoreOrganisms(organismStore, feeder, diskStorePath);
 			addLoadedOrganisms(organismStore, feeder);
 			logger.debug("Finished loaded organisms");
 			addCthonicOrganisms(organismStore, feeder);
@@ -62,7 +59,29 @@ public class DefaultOrganismStoreInitializer extends DefaultOrganismBuilder {
 			breedToCapacity(organismStore, feeder, breedStrategy);
 			logger.debug("Done with initial breeding");
 		} catch (StoreFullException sfe) {
-			// Nothing.  Just means the store is full.  Stop filling.
+			// Nothing. Just means the store is full. Stop filling.
+		}
+	}
+
+	public static void loadDiskStoreOrganisms(OrganismStore organismStore, Feeder feeder, String diskStorePathString)
+			throws StoreFullException {
+		if (StringUtils.isNotBlank(diskStorePathString)) {
+			if (objectMapper == null) {
+				objectMapper = new ObjectMapper();
+			}
+			Path diskStoreDirectory = Paths.get(diskStorePathString);
+			try (DirectoryStream<Path> stream = Files.newDirectoryStream(diskStoreDirectory)) {
+				for (Path file : stream) {
+					try (BufferedReader reader = Files.newBufferedReader(file, CHARSET)) {
+						OrganismStoreRecord record = objectMapper.readValue(reader, OrganismStoreRecord.class);
+						Organism organism = record.getOrganism();
+						feedSingleOrganism(organismStore, feeder, organism);
+					}
+				}
+			} catch (IOException | DirectoryIteratorException x) {
+				logger.error("Error in reading in organisms.");
+				logger.error("Exception:", x);
+			}
 		}
 	}
 
@@ -128,19 +147,13 @@ public class DefaultOrganismStoreInitializer extends DefaultOrganismBuilder {
 		}
 	}
 
-	private static void feedSingleOrganism(OrganismStore organisms, Feeder feeder, Organism child)
+	private static void feedSingleOrganism(OrganismStore organisms, Feeder feeder, Organism organism)
 			throws StoreFullException {
-		feeder.setOrganism(child);
+		feeder.setOrganism(organism);
 		feeder.init();
 		feeder.feedOrganism();
-		OrganismStoreRecord storeRecord = new OrganismStoreRecord(feeder.getEvaluator().getScore(), child);
+		OrganismStoreRecord storeRecord = new OrganismStoreRecord(feeder.getEvaluator().getScore(), organism);
 		organisms.addRecord(storeRecord);
-	}
-
-	private static void addMovingAverage(OrganismStore organisms, Feeder feeder, int windowSize)
-			throws StoreFullException {
-		Organism organism = getMovingAverage(windowSize);
-		feedSingleOrganism(organisms, feeder, organism);
 	}
 
 	public static synchronized List<Organism> getLoadedOrganisms() {

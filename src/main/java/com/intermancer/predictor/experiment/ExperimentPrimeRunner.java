@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
@@ -20,6 +21,7 @@ import com.intermancer.predictor.feeder.SimpleRF;
 import com.intermancer.predictor.mutation.DefaultMutationAssistant;
 import com.intermancer.predictor.mutation.DefaultMutationContext;
 import com.intermancer.predictor.mutation.MutationBreedStrategyWrapper;
+import com.intermancer.predictor.mutation.MutationContext;
 import com.intermancer.predictor.organism.breed.BreedStrategy;
 import com.intermancer.predictor.organism.breed.DefaultBreedStrategy;
 import com.intermancer.predictor.organism.store.DefaultOrganismStoreInitializer;
@@ -53,6 +55,7 @@ public class ExperimentPrimeRunner implements Runnable {
 	private int organismSize;
 	
 	private Meter cyclesMeter;
+	private String diskStorePath;
 	
 	public ExperimentPrimeRunner() {
 		listeners = new ArrayList<ExperimentListener>();
@@ -100,13 +103,14 @@ public class ExperimentPrimeRunner implements Runnable {
 	private void setUpOrganismStore() throws Exception {
 		organismStore = new InMemoryQuickAndDirtyOrganismStore();
 		experiment.setOrganismStore(organismStore);
-		DefaultOrganismStoreInitializer.fillStore(organismStore, feeder, breedStrategy);
+		DefaultOrganismStoreInitializer.fillStore(organismStore, feeder, breedStrategy, diskStorePath);
 	}
 
 	private void setUpBreeder() {
 		breedStrategy = new DefaultBreedStrategy();
+		DefaultMutationContext context = new DefaultMutationContext();
 		breedStrategy = new MutationBreedStrategyWrapper(breedStrategy, DEFAULT_NUMBER_OF_MUTATIONS_FOR_INIT,
-				new DefaultMutationAssistant(), new DefaultMutationContext());
+				new DefaultMutationAssistant(), context);
 		experiment.setBreedStrategy(breedStrategy);
 	}
 
@@ -266,6 +270,10 @@ public class ExperimentPrimeRunner implements Runnable {
 
 	public ExperimentResult getLastExperimentResult() {
 		return lastExperimentResult;
+	}
+
+	public void setDiskStorePath(String diskStorePath) {
+		this.diskStorePath = diskStorePath;
 	}
 	
 }

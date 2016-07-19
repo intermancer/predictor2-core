@@ -1,0 +1,39 @@
+{
+  "id" : 842,
+  "score" : 3.9661126414762775E14,
+  "organism" : {
+    "classname" : "com.intermancer.predictor.organism.BaseOrganism",
+    "chromosomes" : [ {
+      "genes" : [ {
+        "classname" : "com.intermancer.predictor.gene.constant.MultiplicationCG",
+        "values" : [ 2.979493888E9 ],
+        "offsets" : [ -1 ],
+        "constant" : 1.1,
+        "inverse" : false,
+        "negative" : false,
+        "hungryCycles" : 0
+      }, {
+        "classname" : "com.intermancer.predictor.gene.constant.ExponentialCG",
+        "values" : [ 3.2774432768E9 ],
+        "offsets" : [ -1 ],
+        "constant" : 1.1,
+        "inverse" : false,
+        "negative" : false,
+        "hungryCycles" : 0
+      } ]
+    }, {
+      "genes" : [ {
+        "classname" : "com.intermancer.predictor.gene.logic.SwitchLG",
+        "values" : [ 2.9314919263678658E10, 2.979493888E9, 1400.38 ],
+        "offsets" : [ -1, -2, -3 ],
+        "hungryCycles" : 0
+      }, {
+        "classname" : "com.intermancer.predictor.gene.transform.AbsoluteValueTG",
+        "values" : [ 1400.38 ],
+        "offsets" : [ -1 ],
+        "hungryCycles" : 0
+      } ]
+    } ]
+  },
+  "index" : 1
+}
