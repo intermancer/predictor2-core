@@ -6,7 +6,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
@@ -21,7 +20,6 @@ import com.intermancer.predictor.feeder.SimpleRF;
 import com.intermancer.predictor.mutation.DefaultMutationAssistant;
 import com.intermancer.predictor.mutation.DefaultMutationContext;
 import com.intermancer.predictor.mutation.MutationBreedStrategyWrapper;
-import com.intermancer.predictor.mutation.MutationContext;
 import com.intermancer.predictor.organism.breed.BreedStrategy;
 import com.intermancer.predictor.organism.breed.DefaultBreedStrategy;
 import com.intermancer.predictor.organism.store.DefaultOrganismStoreInitializer;
@@ -64,6 +62,8 @@ public class ExperimentPrimeRunner implements Runnable {
 
 		if (!metricRegistry.getNames().contains(CYCLES_METER_NAME)) {
 			cyclesMeter = metricRegistry.meter(CYCLES_METER_NAME);
+			
+			// This organismSize metric has not been fully implemented
 			metricRegistry.register(MetricRegistry.name(ExperimentPrimeRunner.class, "organism.gene.size"),
 					new Gauge<Integer>() {
 						@Override
