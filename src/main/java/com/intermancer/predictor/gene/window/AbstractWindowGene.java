@@ -10,7 +10,7 @@ import com.intermancer.predictor.gene.AbstractGene;
 import com.intermancer.predictor.mutation.MutationAssistant;
 import com.intermancer.predictor.mutation.MutationCommand;
 import com.intermancer.predictor.mutation.MutationContext;
-import com.intermancer.predictor.mutation.MutationUtility;
+//import com.intermancer.predictor.mutation.MutationUtility;
 
 /**
  * Window Genes keep track of a moving set of data from the input Channel.
@@ -30,23 +30,23 @@ public abstract class AbstractWindowGene extends AbstractGene {
 
 	}
 	
-	public class WindowGeneNewOffsetMC implements MutationCommand {
-
-		@Override
-		public void execute(MutationAssistant mutationAssistant,
-				MutationContext context) {
-			int newLength = getOffsets().length + 1;
-			int[] newOffsets = new int[newLength];
-			int i = 0;
-			for(int offset : getOffsets()) {
-				newOffsets[i] = offset;
-				i++;
-			}
-			newOffsets[newLength -1] = MutationUtility.getDiceroll(newLength) - 1;
-			setOffsets(newOffsets);
-		}
-		
-	}
+//	public class WindowGeneNewOffsetMC implements MutationCommand {
+//
+//		@Override
+//		public void execute(MutationAssistant mutationAssistant,
+//				MutationContext context) {
+//			int newLength = getOffsets().length + 1;
+//			int[] newOffsets = new int[newLength];
+//			int i = 0;
+//			for(int offset : getOffsets()) {
+//				newOffsets[i] = offset;
+//				i++;
+//			}
+//			newOffsets[newLength -1] = MutationUtility.getDiceroll(newLength) - 1;
+//			setOffsets(newOffsets);
+//		}
+//		
+//	}
 
 	public static final int MINIMUM_WINDOW = 1;
 	public static final int MAXIMUM_WINDOW = 100;
@@ -120,7 +120,7 @@ public abstract class AbstractWindowGene extends AbstractGene {
 	public List<MutationCommand> assembleMutationCommandList() {
 		List<MutationCommand> commands = super.assembleMutationCommandList();
 		commands.add(new WindowGeneWindowSizeMC());
-		commands.add(new WindowGeneNewOffsetMC());
+//		commands.add(new WindowGeneNewOffsetMC());
 		return commands;
 	}
 
