@@ -1,6 +1,8 @@
 package com.intermancer.predictor.experiment;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.intermancer.predictor.feeder.Feeder;
 import com.intermancer.predictor.organism.breed.BreedStrategy;
@@ -18,6 +20,11 @@ public class ExperimentContext {
 	private BreedStrategy breedStrategy;
 	private List<ExperimentListener> listeners;
 	private int iteration;
+	private Map<String, Object> resources;
+	
+	public ExperimentContext() {
+		resources = new HashMap<String, Object>();
+	}
 
 	public int getCycles() {
 		return cycles;
@@ -86,6 +93,14 @@ public class ExperimentContext {
 
 	public void setIteration(int iteration) {
 		this.iteration = iteration;
+	}
+	
+	public void registerResource(String key, Object resource) {
+		resources.put(key, resource);
+	}
+	
+	public Object getResource(String key) {
+		return resources.get(key);
 	}
 
 }

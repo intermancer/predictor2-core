@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intermancer.predictor.experiment.analysis.AnalysisExperimentListener;
 import com.intermancer.predictor.gene.Gene;
 import com.intermancer.predictor.gene.constant.AdditionCG;
 import com.intermancer.predictor.organism.BaseOrganism;
