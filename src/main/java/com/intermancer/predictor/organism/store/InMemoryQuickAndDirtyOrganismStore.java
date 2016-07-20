@@ -66,6 +66,7 @@ public class InMemoryQuickAndDirtyOrganismStore implements OrganismStore {
 		return maxSize;
 	}
 
+	@Override
 	public void setMaxSize(long maxSize) {
 		this.maxSize = maxSize;
 	}
@@ -114,12 +115,20 @@ public class InMemoryQuickAndDirtyOrganismStore implements OrganismStore {
 
 	@Override
 	public double getHighestScore() {
-		return records.get(records.size() - 1).getScore();
+		if (records.size() > 0) {
+			return records.get(records.size() - 1).getScore();
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
 	public double getLowestScore() {
-		return records.get(0).getScore();
+		if (records.size() > 0) {
+			return records.get(0).getScore();
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -139,7 +148,10 @@ public class InMemoryQuickAndDirtyOrganismStore implements OrganismStore {
 
 	@Override
 	public OrganismStoreRecord findByIndex(int index) {
-		return records.get(index);
+		if (index < records.size()) {
+			return records.get(index);			
+		}
+		return null;
 	}
 	
 	public List<OrganismStoreRecord> getRecords() {

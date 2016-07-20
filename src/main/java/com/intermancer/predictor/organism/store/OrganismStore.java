@@ -17,5 +17,6 @@ public interface OrganismStore {
 	int findByScore(double targetScore);
 	OrganismStoreRecord findByIndex(int index);
 	long getMaxSize();
+	void setMaxSize(long maxSize);
 
 }

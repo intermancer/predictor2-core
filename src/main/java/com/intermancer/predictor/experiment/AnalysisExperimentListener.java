@@ -1,5 +1,8 @@
 package com.intermancer.predictor.experiment;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.intermancer.predictor.organism.store.OrganismStore;
 
 /**
@@ -10,27 +13,35 @@ import com.intermancer.predictor.organism.store.OrganismStore;
  * @author JohnFryar
  *
  */
-public class ExperimentAnalysisListener implements ExperimentListener {
+public class AnalysisExperimentListener implements ExperimentListener {
+	
+	private static final Logger logger = LogManager.getLogger(AnalysisExperimentListener.class);
 	
 	private ExperimentResult experimentResult;
 	private long startTimeInMillis;
 	private long endTimeInMillis;
 	private OrganismStore organismStore;
+	private int iteration;
 
-	public ExperimentAnalysisListener(OrganismStore organismStore) {
+	public AnalysisExperimentListener(OrganismStore organismStore) {
 		this.organismStore = organismStore;
 	}
 	
 	@Override
-	public void initializeExperimentListener(Experiment experiment, OrganismStore organismStore) {
+	public void initializeExperimentListener(ExperimentContext context) {
+		logger.debug("Initializing AnalysisExperimentListener...");
 		startTimeInMillis = System.currentTimeMillis();
 		experimentResult = new ExperimentResult();
-		this.organismStore = organismStore;
+		experimentResult.setCycles(context.getCycles());
+		this.organismStore = context.getOrganismStore();
 		getStartingStats();
+		iteration = 0;
 	}
 
 	@Override
 	public void processExperimentCycleResult(ExperimentCycleResult cycleResult) {
+		iteration++;
+		logger.debug("Analyzing iteration {}", iteration);
 		if (cycleResult.isParentWasReplaced()) {
 			experimentResult.incrementImprovementCycles();
 		}
@@ -47,6 +58,7 @@ public class ExperimentAnalysisListener implements ExperimentListener {
 	}
 
 	private void getEndingStatistics() {
+		experimentResult.setIteration(iteration);
 		experimentResult.setFinishHighScore(organismStore.getHighestScore());
 		experimentResult.setFinishLowScore(organismStore.getLowestScore());
 	}

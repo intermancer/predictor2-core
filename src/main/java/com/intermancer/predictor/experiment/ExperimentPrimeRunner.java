@@ -33,82 +33,65 @@ public class ExperimentPrimeRunner implements Runnable {
 	public static final int DEFAULT_NUMBER_OF_CYCLES = 10000;
 	public static final String CYCLES_METER_NAME = "cycles";
 	
-	private Feeder feeder;
-	private DefaultExperiment experiment;
 	private BreedStrategy breedStrategy;
 	private OrganismLifecycleStrategy experimentStrategy;
-	private OrganismStore organismStore;
+	private InMemoryQuickAndDirtyOrganismStore organismStore;
+	private ExperimentContext context;
 	
 	private List<ExperimentListener> listeners;
 	
-	private int cycles;
-	private int iteration;
 	private ExperimentCycleResult lastExperimentCycleResult;
 	private boolean continueExperimenting;
-	private ExperimentResult lastExperimentResult;
 
-	private int maxStoreCapacity;
-	
 	private String diskStorePath;
 	
 	public ExperimentPrimeRunner() {
 		listeners = new ArrayList<ExperimentListener>();
-		
-		cycles = DEFAULT_NUMBER_OF_CYCLES;
+		context = new ExperimentContext();
+		organismStore = new InMemoryQuickAndDirtyOrganismStore();
+		context.setOrganismStore(organismStore);
+		context.setListeners(listeners);
 	}
 
 	public void init() throws Exception {
 		
-		experiment = new DefaultExperiment();
+		Experiment experiment = new DefaultExperiment();
+		context.setExperiment(experiment);
 		setUpFeeder();
 		setUpEvaluator();
 		setUpBreeder();
-		setUpOrganismStore();
+		DefaultOrganismStoreInitializer.fillStore(organismStore, context.getFeeder(), breedStrategy, diskStorePath);
 		setUpExperimentStrategy();
-		experiment.setListeners(listeners);
-		experiment.init();
-		
-		for (ExperimentListener listener : listeners) {
-			listener.initializeExperimentListener(experiment, organismStore);
-		}
+		context.setListeners(listeners);
+		context.getExperiment().init();
 		
 		continueExperimenting = false;
 	}
 
-	private void setUpExperimentStrategy() {
-		experimentStrategy = new ExperimentPrimeStrategy(breedStrategy, feeder);
-		experiment.setOrganismLifecycleStrategy(experimentStrategy);
+	private void setUpFeeder() {
+		Reader fileReader = getFileReader(DEVELOPMENT_DATA_PATH);
+		Feeder feeder = new SimpleRF(fileReader);
+		feeder = new BufferedFeeder(feeder);
+		context.setFeeder(feeder);
 	}
 
-	private void setUpOrganismStore() throws Exception {
-		InMemoryQuickAndDirtyOrganismStore myOrganismStore = new InMemoryQuickAndDirtyOrganismStore();
-		if (maxStoreCapacity > 0) {
-			myOrganismStore.setMaxSize(maxStoreCapacity);
-		}
-		this.organismStore = myOrganismStore;
-		experiment.setOrganismStore(organismStore);
-		DefaultOrganismStoreInitializer.fillStore(organismStore, feeder, breedStrategy, diskStorePath);
+	private void setUpExperimentStrategy() {
+		experimentStrategy = new ExperimentPrimeStrategy(breedStrategy, context.getFeeder());
+		context.setOrganismLifecycleStrategy(experimentStrategy);
 	}
 
 	private void setUpBreeder() {
 		breedStrategy = new DefaultBreedStrategy();
-		DefaultMutationContext context = new DefaultMutationContext();
+		DefaultMutationContext mutationContext = new DefaultMutationContext();
 		breedStrategy = new MutationBreedStrategyWrapper(breedStrategy, DEFAULT_NUMBER_OF_MUTATIONS_FOR_INIT,
-				new DefaultMutationAssistant(), context);
-		experiment.setBreedStrategy(breedStrategy);
+				new DefaultMutationAssistant(), mutationContext);
+		context.setBreedStrategy(breedStrategy);
 	}
 
 	private void setUpEvaluator() {
 		PredictiveEvaluator evaluator = new PredictiveEvaluator();
 		evaluator.setPredictiveWindowSize(DEFAULT_PREDICTIVE_WINDOW_SIZE);
-		feeder.addFeedCycleListener(evaluator);
-	}
-
-	private void setUpFeeder() {
-		Reader fileReader = getFileReader(DEVELOPMENT_DATA_PATH);
-		feeder = new SimpleRF(fileReader);
-		feeder = new BufferedFeeder(feeder);
-		experiment.setFeeder(feeder);
+		context.getFeeder().addFeedCycleListener(evaluator);
 	}
 
 	protected Reader getFileReader(String resourceClasspath) {
@@ -121,73 +104,17 @@ public class ExperimentPrimeRunner implements Runnable {
 		}
 		return fileReader;
 	}
-
-	public Experiment getExperiment() {
-		return experiment;
-	}
-
+	
 	public OrganismStore getOrganismStore() {
 		return organismStore;
-	}
-
-	public ExperimentCycleResult runExperimentCycle() throws Exception {
-		ExperimentCycleResult cycleResult = experiment.runExperimentCycle();
-		return cycleResult;
-	}
-	
-	public void runExperimentSeries(ExperimentContext context) throws Exception {
-		init();
-		for (int i = 0; i < context.getNumberOfCycles(); i++) {
-			runExperimentCycle();
-		}
-	}
-
-	public Feeder getFeeder() {
-		return feeder;
-	}
-
-	public void setFeeder(Feeder feeder) {
-		this.feeder = feeder;
-	}
-
-	public BreedStrategy getBreedStrategy() {
-		return breedStrategy;
-	}
-
-	public void setBreedStrategy(BreedStrategy breedStrategy) {
-		this.breedStrategy = breedStrategy;
-	}
-
-	public OrganismLifecycleStrategy getExperimentStrategy() {
-		return experimentStrategy;
-	}
-
-	public void setExperimentStrategy(OrganismLifecycleStrategy experimentStrategy) {
-		this.experimentStrategy = experimentStrategy;
-	}
-
-	public void setExperiment(DefaultExperiment experiment) {
-		this.experiment = experiment;
-	}
-
-	public void setOrganismStore(OrganismStore organismStore) {
-		this.organismStore = organismStore;
 	}
 
 	public void addExperimentListener(ExperimentListener experimentListener) {
 		listeners.add(experimentListener);
 	}
 	
-	public void setCycles(int cycles) {
-		this.cycles = cycles;
-	}
-	
-	public int getCycles() {
-		return cycles;
-	}
-	
-	public int getIteration() {
-		return iteration;
+	public ExperimentContext getContext() {
+		return context;
 	}
 	
 	public ExperimentCycleResult getLastExperimentCycleResult() {
@@ -206,41 +133,14 @@ public class ExperimentPrimeRunner implements Runnable {
 
 	public synchronized void startExperiment() throws Exception {
 		logger.debug("Starting experiment run");
-		ExperimentResult experimentResult = initializeExperimentResult();
-		long millisStart = System.currentTimeMillis();
-		
-		int parentsReplaced = 0;
-		logger.debug("cycles:{}", cycles);
+		logger.debug("cycles:{}", context.getCycles());
 		logger.debug("continueExperimenting:{}", continueExperimenting);
-		for (iteration = 0; (iteration < cycles) || continueExperimenting; iteration++) {
-			ExperimentCycleResult experimentCycleResult = experiment.runExperimentCycle();
-			if (experimentCycleResult.isParentWasReplaced()) {
-				parentsReplaced++;
-			}
+		init();
+		for (int iteration = 0; (iteration < context.getCycles()) || continueExperimenting; iteration++) {
+			context.setIteration(iteration);
+			ExperimentCycleResult experimentCycleResult = context.getExperiment().runExperimentCycle();
 			lastExperimentCycleResult = experimentCycleResult;
-			experimentResult.setIteration(iteration);
 		}
-		
-		long millisEnd = System.currentTimeMillis();
-		finalizeExperimentResult(experimentResult, millisStart, parentsReplaced, millisEnd);
-		
-		lastExperimentResult = experimentResult;
-	}
-
-	private void finalizeExperimentResult(ExperimentResult experimentResult, long millisStart, int parentsReplaced,
-			long millisEnd) {
-		experimentResult.setDurationInMillis(millisEnd - millisStart);
-		experimentResult.setImprovementCycles(parentsReplaced);
-		experimentResult.setFinishHighScore(getOrganismStore().getHighestScore());
-		experimentResult.setFinishLowScore(getOrganismStore().getLowestScore());
-	}
-
-	private ExperimentResult initializeExperimentResult() {
-		ExperimentResult experimentResult = new ExperimentResult();
-		experimentResult.setCycles(cycles);
-		experimentResult.setStartHighScore(getOrganismStore().getHighestScore());
-		experimentResult.setStartLowScore(getOrganismStore().getLowestScore());
-		return experimentResult;
 	}
 
 	public boolean isContinueExperimenting() {
@@ -251,20 +151,8 @@ public class ExperimentPrimeRunner implements Runnable {
 		this.continueExperimenting = continueExperimenting;
 	}
 
-	public ExperimentResult getLastExperimentResult() {
-		return lastExperimentResult;
-	}
-
 	public void setDiskStorePath(String diskStorePath) {
 		this.diskStorePath = diskStorePath;
 	}
 
-	public int getMaxStoreCapacity() {
-		return maxStoreCapacity;
-	}
-
-	public void setMaxStoreCapacity(int maxStoreCapacity) {
-		this.maxStoreCapacity = maxStoreCapacity;
-	}
-	
 }

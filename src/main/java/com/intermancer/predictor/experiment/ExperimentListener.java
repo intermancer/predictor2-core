@@ -1,10 +1,8 @@
 package com.intermancer.predictor.experiment;
 
-import com.intermancer.predictor.organism.store.OrganismStore;
-
 public interface ExperimentListener {
 
-	void initializeExperimentListener(Experiment experiment, OrganismStore organismStore);
+	void initializeExperimentListener(ExperimentContext context);
 	void processExperimentCycleResult(ExperimentCycleResult cycleResult);
 
 }

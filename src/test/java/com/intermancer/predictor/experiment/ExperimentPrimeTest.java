@@ -45,7 +45,7 @@ public class ExperimentPrimeTest extends SystemTest {
 		ExperimentCycleResult result = null;
 		int iteration = 0;
 		while (iteration < MIN_ITERATIONS) {
-			result = experimentRunner.runExperimentCycle();
+			result = experimentRunner.getContext().getExperiment().runExperimentCycle();
 			if (result.isParentWasReplaced()) {
 				parentReplacedCount++;
 			}
@@ -73,16 +73,15 @@ public class ExperimentPrimeTest extends SystemTest {
 	@Test
 	public void testExperimentSeries() throws Exception {
 		ExperimentPrimeRunner experimentRunner = new ExperimentPrimeRunner();
-		experimentRunner.setMaxStoreCapacity(5);
+		experimentRunner.getOrganismStore().setMaxSize(5);
 
 		experimentRunner.addExperimentListener(new ProgressReportingEL());
 		AnalysisExperimentListener analysisListener = new AnalysisExperimentListener(
 				experimentRunner.getOrganismStore());
 		experimentRunner.addExperimentListener(analysisListener);
-		ExperimentContext context = new ExperimentContext();
-		context.setNumberOfCycles(10);
-		experimentRunner.init();
-		experimentRunner.runExperimentSeries(context);
+		experimentRunner.getContext().setCycles(10);
+		experimentRunner.startExperiment();
+		assertEquals(10, analysisListener.getExperimentResult().getIteration());
 		System.out.println("");
 		System.out.println(analysisListener.getExperimentResult());
 	}

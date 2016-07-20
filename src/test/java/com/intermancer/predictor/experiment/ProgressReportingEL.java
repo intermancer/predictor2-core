@@ -1,7 +1,5 @@
 package com.intermancer.predictor.experiment;
 
-import com.intermancer.predictor.organism.store.OrganismStore;
-
 public class ProgressReportingEL implements ExperimentListener {
 	
 	private int reportingIncrement = 500;
@@ -14,7 +12,7 @@ public class ProgressReportingEL implements ExperimentListener {
 	}
 
 	@Override
-	public void initializeExperimentListener(Experiment experiment, OrganismStore organismStore) {
+	public void initializeExperimentListener(ExperimentContext context) {
 	}
 
 	@Override
