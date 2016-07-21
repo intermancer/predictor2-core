@@ -16,7 +16,7 @@ public abstract class AbstractFeeder implements Feeder {
 			return true;
 		}
 
-		public void init() {
+		public void init(Feeder feeder) {
 		}
 	};
 
@@ -60,7 +60,7 @@ public abstract class AbstractFeeder implements Feeder {
 			addFeedCycleListener(DEFAULT_FEED_CYCLE_LISTENER);
 		} else {
 			for(FeedCycleListener processor : feedCycleListeners) {
-				processor.init();
+				processor.init(this);
 			}
 		}
 		
@@ -80,6 +80,7 @@ public abstract class AbstractFeeder implements Feeder {
 		return evaluator;
 	}
 
+	@Override
 	public List<FeedCycleListener> getFeedCycleListeners() {
 		return feedCycleListeners;
 	}

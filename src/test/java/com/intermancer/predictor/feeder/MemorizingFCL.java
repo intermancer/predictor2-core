@@ -33,7 +33,7 @@ public class MemorizingFCL implements FeedCycleListener {
 	}
 
 	@Override
-	public void init() {
+	public void init(Feeder feeder) {
 		setCount(0);
 		//THIS NEEDS TO CLONE
 		setResponses(new ArrayList<ConsumeResponse>(windowSize));

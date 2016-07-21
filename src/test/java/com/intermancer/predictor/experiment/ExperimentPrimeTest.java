@@ -39,7 +39,7 @@ public class ExperimentPrimeTest extends SystemTest {
 
 		System.out.println("Before running experiment:");
 		outputScoreStats(experimentRunner);
-		assertTrue(experimentRunner.getOrganismStore()
+		assertTrue(experimentRunner.getContext().getOrganismStore()
 				.getCount() == InMemoryQuickAndDirtyOrganismStore.DEFAULT_MAX_CAPACITY);
 
 		int parentReplacedCount = 0;
@@ -66,7 +66,7 @@ public class ExperimentPrimeTest extends SystemTest {
 		System.out.println("Five best organism records:");
 		for (int i = 0; i < 5; i++) {
 			System.out.println(StringEscapeUtils.escapeJava(
-					mapper.writeValueAsString(experimentRunner.getOrganismStore().findByIndex(i).getOrganism())));
+					mapper.writeValueAsString(experimentRunner.getContext().getOrganismStore().findByIndex(i).getOrganism())));
 		}
 
 	}
@@ -74,13 +74,14 @@ public class ExperimentPrimeTest extends SystemTest {
 	@Test
 	public void testExperimentSeries() throws Exception {
 		ExperimentPrimeRunner experimentRunner = new ExperimentPrimeRunner();
-		experimentRunner.getOrganismStore().setMaxSize(5);
+		experimentRunner.getContext().getOrganismStore().setMaxSize(5);
 
 		experimentRunner.addExperimentListener(new ProgressReportingEL());
 		AnalysisExperimentListener analysisListener = new AnalysisExperimentListener(
-				experimentRunner.getOrganismStore());
+				experimentRunner.getContext().getOrganismStore());
 		experimentRunner.addExperimentListener(analysisListener);
 		experimentRunner.getContext().setCycles(10);
+
 		experimentRunner.startExperiment();
 		assertEquals(10, analysisListener.getExperimentResult().getIteration());
 		System.out.println("");
@@ -117,9 +118,8 @@ public class ExperimentPrimeTest extends SystemTest {
 	}
 
 	private void outputScoreStats(ExperimentPrimeRunner experimentRunner) {
-		experimentRunner.getOrganismStore().analyze();
-		double lowScore = experimentRunner.getOrganismStore().getLowestScore();
-		double highScore = experimentRunner.getOrganismStore().getHighestScore();
+		double lowScore = experimentRunner.getContext().getOrganismStore().getLowestScore();
+		double highScore = experimentRunner.getContext().getOrganismStore().getHighestScore();
 
 		System.out.println("High Score: " + highScore);
 		System.out.println("Low Score: " + lowScore);

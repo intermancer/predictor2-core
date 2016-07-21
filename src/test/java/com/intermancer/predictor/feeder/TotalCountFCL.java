@@ -9,7 +9,7 @@ public class TotalCountFCL implements FeedCycleListener, Counter {
 	public int count;
 
 	@Override
-	public void init() {
+	public void init(Feeder feeder) {
 		count = 0;
 	}
 

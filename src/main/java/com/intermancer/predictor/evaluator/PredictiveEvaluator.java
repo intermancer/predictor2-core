@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.intermancer.predictor.data.ConsumeResponse;
 import com.intermancer.predictor.data.Quantum;
+import com.intermancer.predictor.feeder.Feeder;
 
 public class PredictiveEvaluator implements Evaluator {
 	
@@ -19,8 +20,14 @@ public class PredictiveEvaluator implements Evaluator {
 		
 	}
 
+	@Override
 	public int getTargetOffset() {
 		return targetOffset;
+	}
+	
+	@Override
+	public int getEvaluationOffset() {
+		return getPredictiveOffset();
 	}
 
 	public void setTargetOffset(int targetOffset) {
@@ -44,7 +51,7 @@ public class PredictiveEvaluator implements Evaluator {
 	}
 	
 	@Override
-	public void init() {
+	public void init(Feeder feeder) {
 		predictiveValueWindow = new ArrayList<Double>();
 		compositeScore = 0.0;
 	}

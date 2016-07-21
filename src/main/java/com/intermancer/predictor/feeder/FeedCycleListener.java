@@ -15,7 +15,7 @@ public interface FeedCycleListener {
 	/**
 	 * Called from Feeder.init().
 	 */
-	void init();
+	void init(Feeder feeder);
 
 	/**
 	 * Called after a Quantum is fed to an Organism

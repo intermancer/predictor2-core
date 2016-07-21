@@ -15,6 +15,7 @@ public interface Feeder {
 	void init();
 	void addFeedCycleListener(FeedCycleListener feedCycleListener);
 	void setFeedCycleListeners(List<FeedCycleListener> listeners);
+	List<FeedCycleListener> getFeedCycleListeners();
 	Evaluator getEvaluator();
 	Iterator<Quantum> getIterator();
 

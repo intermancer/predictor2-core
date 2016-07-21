@@ -21,7 +21,6 @@ import com.intermancer.predictor.organism.breed.BreedStrategy;
 import com.intermancer.predictor.organism.breed.DefaultBreedStrategy;
 import com.intermancer.predictor.organism.store.DefaultOrganismStoreInitializer;
 import com.intermancer.predictor.organism.store.InMemoryQuickAndDirtyOrganismStore;
-import com.intermancer.predictor.organism.store.OrganismStore;
 
 public class ExperimentPrimeRunner implements Runnable {
 	
@@ -51,6 +50,13 @@ public class ExperimentPrimeRunner implements Runnable {
 		organismStore = new InMemoryQuickAndDirtyOrganismStore();
 		context.setOrganismStore(organismStore);
 		context.setListeners(listeners);
+	}
+	
+	public ExperimentPrimeRunner(boolean initialize) throws Exception {
+		this();
+		if (initialize) {
+			init();
+		}
 	}
 
 	public void init() throws Exception {
@@ -91,6 +97,7 @@ public class ExperimentPrimeRunner implements Runnable {
 	private void setUpEvaluator() {
 		PredictiveEvaluator evaluator = new PredictiveEvaluator();
 		evaluator.setPredictiveWindowSize(DEFAULT_PREDICTIVE_WINDOW_SIZE);
+		evaluator.setTargetOffset(1);
 		context.getFeeder().addFeedCycleListener(evaluator);
 	}
 
@@ -105,10 +112,6 @@ public class ExperimentPrimeRunner implements Runnable {
 		return fileReader;
 	}
 	
-	public OrganismStore getOrganismStore() {
-		return organismStore;
-	}
-
 	public void addExperimentListener(ExperimentListener experimentListener) {
 		listeners.add(experimentListener);
 	}

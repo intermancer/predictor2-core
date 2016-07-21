@@ -67,6 +67,7 @@ public class ExperimentPrimeStrategy implements OrganismLifecycleStrategy {
 		return scoredChildren;
 	}
 
+	@Override
 	public OrganismStoreRecord feedOrganism(Organism organism) {
 		feeder.setOrganism(organism);
 		feeder.init();

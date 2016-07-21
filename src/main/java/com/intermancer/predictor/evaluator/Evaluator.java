@@ -18,5 +18,7 @@ public interface Evaluator extends FeedCycleListener {
 	 * @return A lower score is better.
 	 */
 	double getScore();
+	int getTargetOffset();
+	int getEvaluationOffset();
 
 }
