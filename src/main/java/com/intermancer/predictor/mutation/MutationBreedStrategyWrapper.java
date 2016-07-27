@@ -36,8 +36,9 @@ public class MutationBreedStrategyWrapper implements BreedStrategy {
 	@Override
 	public List<Organism> breed(List<Organism> parents) {
 		List<Organism> children = component.breed(parents);
-		for (Organism child : children) {
-			mutate(child);
+		// Let's try just mutating the second child.
+		if (children.size() > 1) {
+			mutate(children.get(1));
 		}
 		return children;
 	}

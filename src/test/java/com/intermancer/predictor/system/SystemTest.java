@@ -25,7 +25,7 @@ public class SystemTest extends QuantumConsumerTest {
 
 	protected static final int WATCH_CHANNEL_OFFSET = 4;
 	protected static final int LOOK_AHEAD = 5;
-	protected static final String DATA_PATH = "com/intermancer/predictor/test/data/sp500-ascii/GSPC.TXT";
+	protected static final String DATA_PATH = "com/intermancer/predictor/test/data/sp500-ascii/SP500.txt";
 
 	protected Reader getFileReader(String resourceClasspath) {
 		Reader fileReader = null;

@@ -1,5 +1,6 @@
 package com.intermancer.predictor.experiment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +23,11 @@ public class ExperimentContext {
 	private int iteration;
 	private Map<String, Object> resources;
 	private String diskStorePath;
+	private long startTime;
 	
 	public ExperimentContext() {
 		resources = new HashMap<String, Object>();
+		listeners = new ArrayList<ExperimentListener>();
 	}
 
 	public int getCycles() {
@@ -80,11 +83,11 @@ public class ExperimentContext {
 		return listeners;
 	}
 
-	public void setListeners(List<ExperimentListener> listeners) {
+	public void setExperimentListeners(List<ExperimentListener> listeners) {
 		this.listeners = listeners;
 	}
 	
-	public void addListener(ExperimentListener listener) {
+	public void addExperimentListener(ExperimentListener listener) {
 		listeners.add(listener);
 	}
 
@@ -110,6 +113,14 @@ public class ExperimentContext {
 
 	public void setDiskStorePath(String diskStorePath) {
 		this.diskStorePath = diskStorePath;
+	}
+
+	public void setExperimentStartTime() {
+		startTime = System.currentTimeMillis();
+	}
+	
+	public long getExperimentStartTime() {
+		return startTime;
 	}
 
 }

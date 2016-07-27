@@ -11,7 +11,7 @@ import com.intermancer.predictor.data.Quantum;
 
 public class SimpleRF extends AbstractReaderFeeder {
 	
-	public static final String DEFAULT_DATE_FORMAT = "yyyyMMdd";
+	public static final String DEFAULT_DATE_FORMAT = "M/d/yyyy";
 	private String dateFormat = DEFAULT_DATE_FORMAT;
 	private SimpleDateFormat dateParser;
 

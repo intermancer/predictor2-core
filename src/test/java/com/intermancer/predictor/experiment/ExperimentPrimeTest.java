@@ -76,10 +76,10 @@ public class ExperimentPrimeTest extends SystemTest {
 		ExperimentPrimeRunner experimentRunner = new ExperimentPrimeRunner();
 		experimentRunner.getContext().getOrganismStore().setMaxSize(5);
 
-		experimentRunner.addExperimentListener(new ProgressReportingEL());
+		experimentRunner.getContext().addExperimentListener(new ProgressReportingEL());
 		AnalysisExperimentListener analysisListener = new AnalysisExperimentListener(
 				experimentRunner.getContext().getOrganismStore());
-		experimentRunner.addExperimentListener(analysisListener);
+		experimentRunner.getContext().addExperimentListener(analysisListener);
 		experimentRunner.getContext().setCycles(10);
 
 		experimentRunner.startExperiment();
