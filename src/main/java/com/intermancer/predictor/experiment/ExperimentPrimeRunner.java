@@ -23,35 +23,36 @@ import com.intermancer.predictor.organism.store.DefaultOrganismStoreInitializer;
 import com.intermancer.predictor.organism.store.InMemoryQuickAndDirtyOrganismStore;
 
 public class ExperimentPrimeRunner implements Runnable {
-	
+
 	private static final Logger logger = LogManager.getLogger(ExperimentPrimeRunner.class);
-	
+
 	protected static final String DEVELOPMENT_DATA_PATH = "com/intermancer/predictor/test/data/sp500-ascii/GSPC.TXT";
 	public static final int DEFAULT_PREDICTIVE_WINDOW_SIZE = 4;
 	public static final int DEFAULT_NUMBER_OF_MUTATIONS_FOR_INIT = 5;
 	public static final int DEFAULT_NUMBER_OF_CYCLES = 10000;
 	public static final String CYCLES_METER_NAME = "cycles";
-	
+
 	private BreedStrategy breedStrategy;
 	private OrganismLifecycleStrategy experimentStrategy;
 	private InMemoryQuickAndDirtyOrganismStore organismStore;
 	private ExperimentContext context;
-	
+
 	private List<ExperimentListener> listeners;
-	
+
 	private ExperimentCycleResult lastExperimentCycleResult;
 	private boolean continueExperimenting;
 
-	private String diskStorePath;
-	
 	public ExperimentPrimeRunner() {
 		listeners = new ArrayList<ExperimentListener>();
 		context = new ExperimentContext();
 		organismStore = new InMemoryQuickAndDirtyOrganismStore();
 		context.setOrganismStore(organismStore);
 		context.setListeners(listeners);
+		setUpFeeder();
+		setUpEvaluator();
+		setUpBreeder();
 	}
-	
+
 	public ExperimentPrimeRunner(boolean initialize) throws Exception {
 		this();
 		if (initialize) {
@@ -60,17 +61,15 @@ public class ExperimentPrimeRunner implements Runnable {
 	}
 
 	public void init() throws Exception {
-		
+
 		Experiment experiment = new DefaultExperiment();
 		context.setExperiment(experiment);
-		setUpFeeder();
-		setUpEvaluator();
-		setUpBreeder();
-		DefaultOrganismStoreInitializer.fillStore(organismStore, context.getFeeder(), breedStrategy, diskStorePath);
+		DefaultOrganismStoreInitializer.fillStore(organismStore, context.getFeeder(), breedStrategy,
+				context.getDiskStorePath());
 		setUpExperimentStrategy();
 		context.setListeners(listeners);
 		context.getExperiment().init();
-		
+
 		continueExperimenting = false;
 	}
 
@@ -104,22 +103,21 @@ public class ExperimentPrimeRunner implements Runnable {
 	protected Reader getFileReader(String resourceClasspath) {
 		Reader fileReader = null;
 		try {
-			fileReader =
-					new InputStreamReader(new ClassPathResource(resourceClasspath).getInputStream());
+			fileReader = new InputStreamReader(new ClassPathResource(resourceClasspath).getInputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return fileReader;
 	}
-	
+
 	public void addExperimentListener(ExperimentListener experimentListener) {
 		listeners.add(experimentListener);
 	}
-	
+
 	public ExperimentContext getContext() {
 		return context;
 	}
-	
+
 	public ExperimentCycleResult getLastExperimentCycleResult() {
 		return lastExperimentCycleResult;
 	}
@@ -129,8 +127,7 @@ public class ExperimentPrimeRunner implements Runnable {
 		try {
 			startExperiment();
 		} catch (Exception ex) {
-			logger.error("There was an exception in running the experiment on a background thread.", 
-					ex);
+			logger.error("There was an exception in running the experiment on a background thread.", ex);
 		}
 	}
 
@@ -152,10 +149,6 @@ public class ExperimentPrimeRunner implements Runnable {
 
 	public void setContinueExperimenting(boolean continueExperimenting) {
 		this.continueExperimenting = continueExperimenting;
-	}
-
-	public void setDiskStorePath(String diskStorePath) {
-		this.diskStorePath = diskStorePath;
 	}
 
 }

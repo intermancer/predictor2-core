@@ -3,6 +3,7 @@ package com.intermancer.predictor.organism;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.nio.charset.Charset;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -57,6 +58,13 @@ public class OrganismFileUtilityTest extends QuantumConsumerTest {
 		}
 		
 		assertEquals(organism, readInOrganism);
+		
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(testDirectoryPath)) {
+			for (Path file : stream) {
+				Files.delete(file);
+			}
+		}
+
 		
 	}
 

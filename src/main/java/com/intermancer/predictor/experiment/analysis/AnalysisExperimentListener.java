@@ -71,7 +71,7 @@ public class AnalysisExperimentListener implements ExperimentListener {
 		experimentResult.setFinishLowScore(organismStore.getLowestScore());
 		endTimeInMillis = System.currentTimeMillis();
 		experimentResult.setDurationInMillis(endTimeInMillis - startTimeInMillis);
-		bestScoreTimeData.add(new FixedMillisecond(endTimeInMillis), organismStore.getLowestScore());
+		bestScoreTimeData.addOrUpdate(new FixedMillisecond(endTimeInMillis), organismStore.getLowestScore());
 	}
 
 	public ExperimentResult getExperimentResult() {

@@ -20,5 +20,7 @@ public interface Evaluator extends FeedCycleListener {
 	double getScore();
 	int getTargetOffset();
 	int getEvaluationOffset();
+	double getTrainingValue();
+	double getPredictedValue();
 
 }

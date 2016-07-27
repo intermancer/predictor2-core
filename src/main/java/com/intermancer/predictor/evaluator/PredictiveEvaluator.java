@@ -8,23 +8,26 @@ import com.intermancer.predictor.data.Quantum;
 import com.intermancer.predictor.feeder.Feeder;
 
 public class PredictiveEvaluator implements Evaluator {
-	
+
 	private List<Double> predictiveValueWindow;
 	private double compositeScore;
 
-	private int targetOffset = 0;
+	private int targetOffset = 1;
 	private int predictiveOffset = -1;
-	private int predictiveWindowSize = 1;
+	private int predictiveWindowSize = 2;
 	
+	private double trainingValue;
+	private double predictedValue;
+
 	public PredictiveEvaluator() {
-		
+
 	}
 
 	@Override
 	public int getTargetOffset() {
 		return targetOffset;
 	}
-	
+
 	@Override
 	public int getEvaluationOffset() {
 		return getPredictiveOffset();
@@ -49,10 +52,10 @@ public class PredictiveEvaluator implements Evaluator {
 	public void setPredictiveWindowSize(int predictiveWindowSize) {
 		this.predictiveWindowSize = predictiveWindowSize;
 	}
-	
+
 	@Override
 	public void init(Feeder feeder) {
-		predictiveValueWindow = new ArrayList<Double>();
+		predictiveValueWindow = new ArrayList<Double>(predictiveWindowSize + 1);
 		compositeScore = 0.0;
 	}
 
@@ -61,8 +64,11 @@ public class PredictiveEvaluator implements Evaluator {
 		if (consumeResponse.equals(ConsumeResponse.CONSUME_COMPLETE)) {
 			predictiveValueWindow.add(quantum.getChannel(predictiveOffset).getValue());
 			if (predictiveWindowSize < predictiveValueWindow.size()) {
-				compositeScore += Math.abs(predictiveValueWindow.get(0).doubleValue()
-						- quantum.getChannel(targetOffset).getValue().doubleValue());
+				predictedValue = predictiveValueWindow.get(0).doubleValue();
+				trainingValue = quantum.getChannel(targetOffset).getValue().doubleValue();
+				double absoluteDifference = Math.abs(trainingValue - predictedValue);
+				compositeScore += absoluteDifference;
+				predictiveValueWindow.remove(0);
 			}
 		}
 		return true;
@@ -71,6 +77,16 @@ public class PredictiveEvaluator implements Evaluator {
 	@Override
 	public double getScore() {
 		return compositeScore;
+	}
+
+	@Override
+	public double getTrainingValue() {
+		return trainingValue;
+	}
+
+	@Override
+	public double getPredictedValue() {
+		return predictedValue;
 	}
 
 }

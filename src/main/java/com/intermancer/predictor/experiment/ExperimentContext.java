@@ -21,6 +21,7 @@ public class ExperimentContext {
 	private List<ExperimentListener> listeners;
 	private int iteration;
 	private Map<String, Object> resources;
+	private String diskStorePath;
 	
 	public ExperimentContext() {
 		resources = new HashMap<String, Object>();
@@ -101,6 +102,14 @@ public class ExperimentContext {
 	
 	public Object getResource(String key) {
 		return resources.get(key);
+	}
+
+	public String getDiskStorePath() {
+		return diskStorePath;
+	}
+
+	public void setDiskStorePath(String diskStorePath) {
+		this.diskStorePath = diskStorePath;
 	}
 
 }
