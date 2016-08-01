@@ -13,9 +13,9 @@ public interface OrganismLifecycleStrategy {
 
 	List<OrganismStoreRecord> generateNextGeneration(List<OrganismStoreRecord> ancestors);
 
+	OrganismStoreRecord feedOrganism(Organism organism);
+
 	List<OrganismStoreRecord> mergeIntoPopulation(List<OrganismStoreRecord> ancestors, List<OrganismStoreRecord> children,
 			OrganismStore store) throws StoreFullException;
-
-	OrganismStoreRecord feedOrganism(Organism organism);
 
 }
