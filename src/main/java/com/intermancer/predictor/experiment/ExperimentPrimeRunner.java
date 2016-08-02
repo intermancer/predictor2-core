@@ -59,8 +59,6 @@ public class ExperimentPrimeRunner implements Runnable {
 		DefaultOrganismStoreInitializer.fillStore(context.getOrganismStore(), context.getFeeder(),
 				context.getBreedStrategy(), context.getDiskStorePath());
 		context.getExperiment().init();
-
-		continueExperimenting = false;
 	}
 
 	private void setUpFeeder() {
