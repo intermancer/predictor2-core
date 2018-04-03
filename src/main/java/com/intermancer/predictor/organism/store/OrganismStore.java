@@ -2,21 +2,10 @@ package com.intermancer.predictor.organism.store;
 
 public interface OrganismStore {
 
-	void addRecord(OrganismStoreRecord storeRecord) throws StoreFullException;
-	Long getNextId();
+//	void addRecord(OrganismStoreRecord storeRecord) throws StoreFullException;
+	String getNextOrganismId();
 	boolean hasCapacity();
-	OrganismStoreRecord getRandomOrganismStoreRecord();
-	OrganismStoreRecord getRandomOrganismStoreRecordFromLowScorePool(double d);
-
 	long getCount();
-	void removeRecord(OrganismStoreRecord storeRecord);
+	void removeOrganism(String organismId);
 	
-	void analyze();
-	double getHighestScore();
-	double getLowestScore();
-	int findByScore(double targetScore);
-	OrganismStoreRecord findByIndex(int index);
-	long getMaxSize();
-	void setMaxSize(long maxSize);
-
 }

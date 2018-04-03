@@ -2,36 +2,36 @@ package com.intermancer.predictor.experiment;
 
 import java.util.List;
 
-import com.intermancer.predictor.organism.store.OrganismStoreRecord;
+import com.intermancer.predictor.organism.store.OrganismIndexRecord;
 
 public class ExperimentCycleResult {
 	
-	private List<OrganismStoreRecord> ancestors;
-	private List<OrganismStoreRecord> children;
-	private List<OrganismStoreRecord> finals;
+	private List<OrganismIndexRecord> ancestors;
+	private List<OrganismIndexRecord> children;
+	private List<OrganismIndexRecord> finals;
 	private boolean parentWasReplaced = false;
 	
-	public List<OrganismStoreRecord> getAncestors() {
+	public List<OrganismIndexRecord> getAncestors() {
 		return ancestors;
 	}
 
-	public void setAncestors(List<OrganismStoreRecord> ancestors) {
+	public void setAncestors(List<OrganismIndexRecord> ancestors) {
 		this.ancestors = ancestors;
 	}
 
-	public List<OrganismStoreRecord> getChildren() {
+	public List<OrganismIndexRecord> getChildren() {
 		return children;
 	}
 	
-	public void setChildren(List<OrganismStoreRecord> children) {
+	public void setChildren(List<OrganismIndexRecord> children) {
 		this.children = children;
 	}
 	
-	public List<OrganismStoreRecord> getFinals() {
+	public List<OrganismIndexRecord> getFinals() {
 		return finals;
 	}
 
-	public void setFinals(List<OrganismStoreRecord> finals) {
+	public void setFinals(List<OrganismIndexRecord> finals) {
 		this.finals = finals;
 	}
 

@@ -14,6 +14,8 @@ import com.intermancer.predictor.mutation.MutationUtility;
 
 public class BaseOrganism implements Organism {
 	
+	String id;
+	
 	public class NewSegmentMC implements MutationCommand {
 
 		public void execute(MutationAssistant mutationAssistant,
@@ -124,6 +126,15 @@ public class BaseOrganism implements Organism {
 			hashCode += chromosome.hashCode();
 		}
 		return hashCode;
+	}
+	
+	@Override
+	public String getId() {
+		return this.id;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

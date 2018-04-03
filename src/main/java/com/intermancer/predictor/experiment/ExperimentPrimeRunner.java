@@ -19,6 +19,7 @@ import com.intermancer.predictor.organism.breed.BreedStrategy;
 import com.intermancer.predictor.organism.breed.DefaultBreedStrategy;
 import com.intermancer.predictor.organism.store.DefaultOrganismStoreInitializer;
 import com.intermancer.predictor.organism.store.InMemoryQuickAndDirtyOrganismStore;
+import com.intermancer.predictor.organism.store.InMemoryQuickAndDirtyOgranismStoreIndex;
 
 public class ExperimentPrimeRunner implements Runnable {
 
@@ -38,7 +39,7 @@ public class ExperimentPrimeRunner implements Runnable {
 
 	public ExperimentPrimeRunner() {
 		context = new ExperimentContext();
-		context.setOrganismStore(new InMemoryQuickAndDirtyOrganismStore());
+		context.setOrganismStoreIndex(new InMemoryQuickAndDirtyOgranismStoreIndex());
 		setUpFeeder();
 		setUpEvaluator();
 		setUpBreeder();
@@ -56,7 +57,7 @@ public class ExperimentPrimeRunner implements Runnable {
 
 		Experiment experiment = new DefaultExperiment();
 		context.setExperiment(experiment);
-		DefaultOrganismStoreInitializer.fillStore(context.getOrganismStore(), context.getFeeder(),
+		DefaultOrganismStoreInitializer.fillStore(context.getOrganismStoreIndex(), context.getFeeder(),
 				context.getBreedStrategy(), context.getDiskStorePath());
 		context.getExperiment().init();
 	}

@@ -6,17 +6,6 @@ import com.intermancer.predictor.organism.Organism;
 
 public class OrganismStoreRecord {
 	
-	private static class ScoreComparator implements Comparator<OrganismStoreRecord> {
-
-		@Override
-		public int compare(OrganismStoreRecord o1, OrganismStoreRecord o2) {
-			return (int) (o1.getScore() - o2.getScore());
-		}
-		
-	}
-	
-	public static final ScoreComparator COMPARATOR = new ScoreComparator();
-
 	private Long id;
 	private double score;
 	private Organism organism;

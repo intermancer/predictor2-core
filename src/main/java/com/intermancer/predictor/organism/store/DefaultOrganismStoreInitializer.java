@@ -45,25 +45,25 @@ public class DefaultOrganismStoreInitializer extends DefaultOrganismBuilder {
 
 	private static ObjectMapper objectMapper;
 
-	public static void fillStore(OrganismStore organismStore, Feeder feeder, BreedStrategy breedStrategy,
+	public static void fillStore(OrganismStoreIndex organismIndex, Feeder feeder, BreedStrategy breedStrategy,
 			String diskStorePath) throws Exception {
 		try {
-			addDescribedOrganisms(organismStore, feeder);
+			addDescribedOrganisms(organismIndex, feeder);
 			logger.debug("Finished described organisms");
-			loadDiskStoreOrganisms(organismStore, feeder, diskStorePath);
-			addLoadedOrganisms(organismStore, feeder);
+			loadDiskStoreOrganisms(organismIndex, feeder, diskStorePath);
+			addLoadedOrganisms(organismIndex, feeder);
 			logger.debug("Finished loaded organisms");
-			addCthonicOrganisms(organismStore, feeder);
+			addCthonicOrganisms(organismIndex, feeder);
 			logger.debug("Finished cthonic organisms");
 			logger.debug("Starting to breed to capacity");
-			breedToCapacity(organismStore, feeder, breedStrategy);
+			breedToCapacity(organismIndex, feeder, breedStrategy);
 			logger.debug("Done with initial breeding");
 		} catch (StoreFullException sfe) {
 			// Nothing. Just means the store is full. Stop filling.
 		}
 	}
 
-	public static void loadDiskStoreOrganisms(OrganismStore organismStore, Feeder feeder, String diskStorePathString)
+	public static void loadDiskStoreOrganisms(OrganismStoreIndex organismIndex, Feeder feeder, String diskStorePathString)
 			throws StoreFullException {
 		if (StringUtils.isNotBlank(diskStorePathString)) {
 			if (objectMapper == null) {
@@ -75,7 +75,7 @@ public class DefaultOrganismStoreInitializer extends DefaultOrganismBuilder {
 					try (BufferedReader reader = Files.newBufferedReader(file, CHARSET)) {
 						OrganismStoreRecord record = objectMapper.readValue(reader, OrganismStoreRecord.class);
 						Organism organism = record.getOrganism();
-						feedSingleOrganism(organismStore, feeder, organism);
+						feedSingleOrganism(organismIndex, feeder, organism);
 					}
 				}
 			} catch (IOException | DirectoryIteratorException x) {
@@ -85,7 +85,7 @@ public class DefaultOrganismStoreInitializer extends DefaultOrganismBuilder {
 		}
 	}
 
-	private static void addCthonicOrganisms(OrganismStore organismStore, Feeder feeder) throws StoreFullException {
+	private static void addCthonicOrganisms(OrganismStoreIndex organismIndex, Feeder feeder) throws StoreFullException {
 		GeneFactory geneFactory = new DefaultGeneFactory();
 		for (int i = 0; i < NUMBER_OF_CTHONIC_ORGANISMS; i++) {
 			List<Gene> geneList = new ArrayList<Gene>();
@@ -93,7 +93,7 @@ public class DefaultOrganismStoreInitializer extends DefaultOrganismBuilder {
 				geneList.add(geneFactory.getGene());
 			}
 			List<Chromosome> chromosomes = transformGenesIntoChromosomes(geneList);
-			feedSingleOrganism(organismStore, feeder, new BaseOrganism(chromosomes));
+			feedSingleOrganism(organismIndex, feeder, new BaseOrganism(chromosomes));
 		}
 	}
 
@@ -112,48 +112,50 @@ public class DefaultOrganismStoreInitializer extends DefaultOrganismBuilder {
 		return chromosomes;
 	}
 
-	private static void addLoadedOrganisms(OrganismStore organisms, Feeder feeder) throws StoreFullException {
+	private static void addLoadedOrganisms(OrganismStoreIndex organismIndex, Feeder feeder) throws StoreFullException {
 		if (loadedOrganisms != null) {
 			for (Organism organism : loadedOrganisms) {
-				feedSingleOrganism(organisms, feeder, organism);
+				feedSingleOrganism(organismIndex, feeder, organism);
 			}
 		}
 	}
 
-	private static void addDescribedOrganisms(OrganismStore organisms, Feeder feeder) throws Exception {
+	private static void addDescribedOrganisms(OrganismStoreIndex organismIndex, Feeder feeder) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.enableDefaultTyping();
 		for (String organismJson : ORGANISM_DESCRIPTIONS) {
 			Organism organism = mapper.readValue(organismJson, BaseOrganism.class);
-			feedSingleOrganism(organisms, feeder, organism);
+			feedSingleOrganism(organismIndex, feeder, organism);
 		}
 	}
 
-	private static void breedToCapacity(OrganismStore organisms, Feeder feeder, BreedStrategy breedStrategy)
+	private static void breedToCapacity(OrganismStoreIndex organismIndex, Feeder feeder, BreedStrategy breedStrategy)
 			throws StoreFullException {
 		List<Organism> parents = new ArrayList<Organism>();
-		while (organisms.hasCapacity()) {
-			OrganismStoreRecord mommy = organisms.getRandomOrganismStoreRecord();
-			OrganismStoreRecord daddy = organisms.getRandomOrganismStoreRecord();
+		OrganismStore store = organismIndex.getOrganismStore();
+		while (store.hasCapacity()) {
+			Organism mommy = organismIndex.getRandomOrganismIndexRecord().getOrganism();
+			Organism daddy = organismIndex.getRandomOrganismIndexRecord().getOrganism();
+
 			parents.clear();
-			parents.add(mommy.getOrganism());
-			parents.add(daddy.getOrganism());
+			parents.add(mommy);
+			parents.add(daddy);
 			List<Organism> children = breedStrategy.breed(parents);
+			
 			for (Organism child : children) {
-				if (organisms.hasCapacity()) {
-					feedSingleOrganism(organisms, feeder, child);
+				if (store.hasCapacity()) {
+					feedSingleOrganism(organismIndex, feeder, child);
 				}
 			}
 		}
 	}
 
-	private static void feedSingleOrganism(OrganismStore organisms, Feeder feeder, Organism organism)
+	private static void feedSingleOrganism(OrganismStoreIndex organismIndex, Feeder feeder, Organism organism)
 			throws StoreFullException {
 		feeder.setOrganism(organism);
 		feeder.init();
 		feeder.feedOrganism();
-		OrganismStoreRecord storeRecord = new OrganismStoreRecord(feeder.getEvaluator().getScore(), organism);
-		organisms.addRecord(storeRecord);
+		OrganismIndexRecord indexRecord = organismIndex.indexAndStore(feeder.getEvaluator().getScore(), organism);
 	}
 
 	public static synchronized List<Organism> getLoadedOrganisms() {

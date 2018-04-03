@@ -41,4 +41,11 @@ public interface Organism extends QuantumConsumer, Mutable {
 	 */
 	void addChromosome(Chromosome chromosome);
 
+	/**
+	 * Ideally, an id is globally unique.
+	 * 
+	 * @return
+	 */
+	String getId();
+	
 }

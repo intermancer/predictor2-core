@@ -9,7 +9,7 @@ import com.intermancer.predictor.experiment.ExperimentContext;
 import com.intermancer.predictor.experiment.ExperimentCycleResult;
 import com.intermancer.predictor.experiment.ExperimentListener;
 import com.intermancer.predictor.experiment.ExperimentResult;
-import com.intermancer.predictor.organism.store.OrganismStore;
+import com.intermancer.predictor.organism.store.OrganismStoreIndex;
 
 /**
  * This ExperimentListener expects to watch an entire experiment, with a
@@ -27,12 +27,12 @@ public class AnalysisExperimentListener implements ExperimentListener {
 	private ExperimentResult experimentResult;
 	private long startTimeInMillis;
 	private long endTimeInMillis;
-	private OrganismStore organismStore;
+	private OrganismStoreIndex organismStoreIndex;
 	private int iteration;
 	private TimeSeries bestScoreTimeData;
 
-	public AnalysisExperimentListener(OrganismStore organismStore) {
-		this.organismStore = organismStore;
+	public AnalysisExperimentListener(OrganismStoreIndex organismStoreIndex) {
+		this.organismStoreIndex = organismStoreIndex;
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class AnalysisExperimentListener implements ExperimentListener {
 		startTimeInMillis = System.currentTimeMillis();
 		experimentResult = new ExperimentResult();
 		experimentResult.setCycles(context.getCycles());
-		this.organismStore = context.getOrganismStore();
+		this.organismStoreIndex = context.getOrganismStoreIndex();
 		getStartingStats();
 		iteration = 0;
 		bestScoreTimeData = new TimeSeries("Best score");
@@ -61,17 +61,17 @@ public class AnalysisExperimentListener implements ExperimentListener {
 	}
 
 	private void getStartingStats() {
-		experimentResult.setStartHighScore(organismStore.getHighestScore());
-		experimentResult.setStartLowScore(organismStore.getLowestScore());
+		experimentResult.setStartHighScore(organismStoreIndex.getHighestScore());
+		experimentResult.setStartLowScore(organismStoreIndex.getLowestScore());
 	}
 
 	private void getExperimentCycleStatistics() {
 		experimentResult.setIteration(iteration);
-		experimentResult.setFinishHighScore(organismStore.getHighestScore());
-		experimentResult.setFinishLowScore(organismStore.getLowestScore());
+		experimentResult.setFinishHighScore(organismStoreIndex.getHighestScore());
+		experimentResult.setFinishLowScore(organismStoreIndex.getLowestScore());
 		endTimeInMillis = System.currentTimeMillis();
 		experimentResult.setDurationInMillis(endTimeInMillis - startTimeInMillis);
-		bestScoreTimeData.addOrUpdate(new FixedMillisecond(endTimeInMillis), organismStore.getLowestScore());
+		bestScoreTimeData.addOrUpdate(new FixedMillisecond(endTimeInMillis), organismStoreIndex.getLowestScore());
 	}
 
 	public ExperimentResult getExperimentResult() {

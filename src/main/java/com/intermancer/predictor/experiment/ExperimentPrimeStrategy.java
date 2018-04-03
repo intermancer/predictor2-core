@@ -13,7 +13,8 @@ import com.intermancer.predictor.feeder.Feeder;
 import com.intermancer.predictor.organism.Organism;
 import com.intermancer.predictor.organism.breed.BreedStrategy;
 import com.intermancer.predictor.organism.store.OrganismStore;
-import com.intermancer.predictor.organism.store.OrganismStoreRecord;
+import com.intermancer.predictor.organism.store.OrganismStoreIndex;
+import com.intermancer.predictor.organism.store.OrganismIndexRecord;
 import com.intermancer.predictor.organism.store.StoreFullException;
 
 public class ExperimentPrimeStrategy implements OrganismLifecycleStrategy {
@@ -35,17 +36,17 @@ public class ExperimentPrimeStrategy implements OrganismLifecycleStrategy {
 	}
 
 	@Override
-	public List<OrganismStoreRecord> getAncestors(OrganismStore store) {
-		List<OrganismStoreRecord> parents = new ArrayList<OrganismStoreRecord>();
+	public List<OrganismIndexRecord> getAncestors(OrganismStoreIndex storeIndex) {
+		List<OrganismIndexRecord> parents = new ArrayList<OrganismIndexRecord>();
 
 		// We will pull alpha from the top quarter.
-		OrganismStoreRecord alpha = store.getRandomOrganismStoreRecordFromLowScorePool(0.25);
+		OrganismIndexRecord alpha = storeIndex.getRandomOrganismIndexRecordFromLowScorePool(0.25);
 		parents.add(alpha);
 
 		// We will pull beta from the entire pool.
-		OrganismStoreRecord beta = alpha;
+		OrganismIndexRecord beta = alpha;
 		do {
-			beta = store.getRandomOrganismStoreRecord();
+			beta = storeIndex.getRandomOrganismIndexRecord();
 		} while (beta.equals(alpha));
 		parents.add(beta);
 
@@ -53,62 +54,64 @@ public class ExperimentPrimeStrategy implements OrganismLifecycleStrategy {
 	}
 
 	@Override
-	public List<OrganismStoreRecord> generateNextGeneration(List<OrganismStoreRecord> ancestors) {
+	public List<OrganismIndexRecord> generateNextGeneration(List<OrganismIndexRecord> ancestors) {
 		List<Organism> ancestorOrganisms = new ArrayList<Organism>();
-		for (OrganismStoreRecord record : ancestors) {
+		for (OrganismIndexRecord record : ancestors) {
 			ancestorOrganisms.add(record.getOrganism());
 		}
 		List<Organism> children = breedStrategy.breed(ancestorOrganisms);
-		List<OrganismStoreRecord> scoredChildren = new ArrayList<OrganismStoreRecord>();
+		List<OrganismIndexRecord> scoredChildren = new ArrayList<OrganismIndexRecord>();
 		for (Organism child : children) {
-			OrganismStoreRecord storeRecord = feedOrganism(child);
+			OrganismIndexRecord storeRecord = feedOrganism(child);
 			scoredChildren.add(storeRecord);
 		}
 		return scoredChildren;
 	}
 
 	@Override
-	public OrganismStoreRecord feedOrganism(Organism organism) {
+	public OrganismIndexRecord feedOrganism(Organism organism) {
 		feeder.setOrganism(organism);
 		feeder.init();
 		feeder.feedOrganism();
-		OrganismStoreRecord storeRecord = new OrganismStoreRecord(feeder.getEvaluator().getScore(), organism);
+		OrganismIndexRecord storeRecord = new OrganismIndexRecord(feeder.getEvaluator().getScore(), organism);
 		return storeRecord;
 	}
 
 	@Override
-	public List<OrganismStoreRecord> mergeIntoPopulation(List<OrganismStoreRecord> ancestors, List<OrganismStoreRecord> children,
-			OrganismStore store) throws StoreFullException {
-		List<OrganismStoreRecord> allOrganisms = new ArrayList<OrganismStoreRecord>();
+	public List<OrganismIndexRecord> mergeIntoPopulation(List<OrganismIndexRecord> ancestors, List<OrganismIndexRecord> children,
+			OrganismStoreIndex storeIndex) throws StoreFullException {
+		List<OrganismIndexRecord> allOrganisms = new ArrayList<OrganismIndexRecord>();
 		allOrganisms.addAll(children);
 		allOrganisms.addAll(ancestors);
-		Collections.sort(allOrganisms, OrganismStoreRecord.COMPARATOR);
+		Collections.sort(allOrganisms, OrganismIndexRecord.COMPARATOR);
 
-		List<OrganismStoreRecord> recordsToRemove = new ArrayList<OrganismStoreRecord>();
-		List<OrganismStoreRecord> recordsToAdd = new ArrayList<OrganismStoreRecord>();
-		List<OrganismStoreRecord> finals = new ArrayList<OrganismStoreRecord>();
+		List<OrganismIndexRecord> recordsToRemove = new ArrayList<OrganismIndexRecord>();
+		List<OrganismIndexRecord> recordsToAdd = new ArrayList<OrganismIndexRecord>();
+		List<OrganismIndexRecord> finals = new ArrayList<OrganismIndexRecord>();
 
 		for (int i = 0; i < allOrganisms.size(); i++) {
-			OrganismStoreRecord record = allOrganisms.get(i);
+			OrganismIndexRecord record = allOrganisms.get(i);
 			if (i < 2) {
-				if (record.getId() == null) {
+				if (record.getOrganismId() == null) {
 					recordsToAdd.add(record);
 				}
 				finals.add(record);
 			} else {
-				if (record.getId() != null) {
+				if (record.getOrganismId() != null) {
 					recordsToRemove.add(record);
 				}
 			}
 		}
 
-		for (OrganismStoreRecord record : recordsToRemove) {
-			store.removeRecord(record);
+		OrganismStore store = storeIndex.getOrganismStore();
+		for (OrganismIndexRecord record : recordsToRemove) {
+			store.removeOrganism(record.getOrganismId());
+			storeIndex.removeRecord(record.getOrganismId());
 		}
 
-		for (OrganismStoreRecord record : recordsToAdd) {
+		for (OrganismIndexRecord record : recordsToAdd) {
 			try {
-				store.addRecord(record);
+				storeIndex.indexAndStore(record.getScore(), record.getOrganism());
 			} catch (StoreFullException ex) {
 				try {
 					// This happened when the two ancestors were the same
@@ -132,7 +135,6 @@ public class ExperimentPrimeStrategy implements OrganismLifecycleStrategy {
 			}
 		}
 
-		store.analyze();
 		return finals;
 	}
 

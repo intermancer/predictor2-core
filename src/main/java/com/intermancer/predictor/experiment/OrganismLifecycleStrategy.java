@@ -3,19 +3,19 @@ package com.intermancer.predictor.experiment;
 import java.util.List;
 
 import com.intermancer.predictor.organism.Organism;
-import com.intermancer.predictor.organism.store.OrganismStore;
-import com.intermancer.predictor.organism.store.OrganismStoreRecord;
+import com.intermancer.predictor.organism.store.OrganismStoreIndex;
+import com.intermancer.predictor.organism.store.OrganismIndexRecord;
 import com.intermancer.predictor.organism.store.StoreFullException;
 
 public interface OrganismLifecycleStrategy {
 
-	List<OrganismStoreRecord> getAncestors(OrganismStore store);
+	List<OrganismIndexRecord> getAncestors(OrganismStoreIndex storeIndex);
 
-	List<OrganismStoreRecord> generateNextGeneration(List<OrganismStoreRecord> ancestors);
+	List<OrganismIndexRecord> generateNextGeneration(List<OrganismIndexRecord> ancestors);
 
-	OrganismStoreRecord feedOrganism(Organism organism);
+	OrganismIndexRecord feedOrganism(Organism organism);
 
-	List<OrganismStoreRecord> mergeIntoPopulation(List<OrganismStoreRecord> ancestors, List<OrganismStoreRecord> children,
-			OrganismStore store) throws StoreFullException;
+	List<OrganismIndexRecord> mergeIntoPopulation(List<OrganismIndexRecord> ancestors, List<OrganismIndexRecord> children,
+			OrganismStoreIndex storeIndex) throws StoreFullException;
 
 }
