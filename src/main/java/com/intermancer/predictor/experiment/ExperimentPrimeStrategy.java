@@ -105,7 +105,7 @@ public class ExperimentPrimeStrategy implements OrganismLifecycleStrategy {
 
 		OrganismStore store = storeIndex.getOrganismStore();
 		for (OrganismIndexRecord record : recordsToRemove) {
-			store.removeOrganism(record.getOrganismId());
+			store.deleteOrganism(record.getOrganismId());
 			storeIndex.removeRecord(record.getOrganismId());
 		}
 

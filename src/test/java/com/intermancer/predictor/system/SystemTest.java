@@ -18,7 +18,6 @@ import com.intermancer.predictor.gene.constant.MultiplicationCG;
 import com.intermancer.predictor.gene.window.MovingSumWG;
 import com.intermancer.predictor.organism.Organism;
 import com.intermancer.predictor.organism.store.OrganismStore;
-import com.intermancer.predictor.organism.store.OrganismStoreRecord;
 import com.intermancer.predictor.organism.store.StoreFullException;
 
 public class SystemTest extends QuantumConsumerTest {
@@ -49,20 +48,16 @@ public class SystemTest extends QuantumConsumerTest {
 		return feeder;
 	}
 
-	protected OrganismStoreRecord getSimpleOrganismStoreRecord(int constant, double score) {
-		return new OrganismStoreRecord(score, getSimpleOrganism(constant));
-	}
-
-	protected void fillStoreWithSimpleOrganisms(OrganismStore store) throws StoreFullException {
-		int constant = 1;
-		Organism organism = null;
-		while (store.hasCapacity()) {
-			organism = getSimpleOrganism(constant);
-			OrganismStoreRecord storeRecord = new OrganismStoreRecord(constant, organism);
-			store.addRecord(storeRecord);
-			constant++;
-		}
-	}
+//	protected void fillStoreWithSimpleOrganisms(OrganismStore store) throws StoreFullException {
+//		int constant = 1;
+//		Organism organism = null;
+//		while (store.hasCapacity()) {
+//			organism = getSimpleOrganism(constant);
+//			OrganismStoreRecord storeRecord = new OrganismStoreRecord(constant, organism);
+//			store.addRecord(storeRecord);
+//			constant++;
+//		}
+//	}
 
 	public Organism getMovingAverage(int windowSize) {
 		return getMovingAverage(-1, windowSize);

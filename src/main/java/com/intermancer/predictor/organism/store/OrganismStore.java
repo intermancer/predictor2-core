@@ -1,11 +1,13 @@
 package com.intermancer.predictor.organism.store;
 
+import com.intermancer.predictor.organism.Organism;
+
 public interface OrganismStore {
 
-//	void addRecord(OrganismStoreRecord storeRecord) throws StoreFullException;
-	String getNextOrganismId();
 	boolean hasCapacity();
 	long getCount();
-	void removeOrganism(String organismId);
+	void deleteOrganism(String organismId);
+	String putOrganism(Organism organism);
+	Organism getOrganism(String organismId);
 	
 }

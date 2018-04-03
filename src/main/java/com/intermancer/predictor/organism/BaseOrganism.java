@@ -133,6 +133,7 @@ public class BaseOrganism implements Organism {
 		return this.id;
 	}
 	
+	@Override
 	public void setId(String id) {
 		this.id = id;
 	}

@@ -73,8 +73,7 @@ public class DefaultOrganismStoreInitializer extends DefaultOrganismBuilder {
 			try (DirectoryStream<Path> stream = Files.newDirectoryStream(diskStoreDirectory)) {
 				for (Path file : stream) {
 					try (BufferedReader reader = Files.newBufferedReader(file, CHARSET)) {
-						OrganismStoreRecord record = objectMapper.readValue(reader, OrganismStoreRecord.class);
-						Organism organism = record.getOrganism();
+						Organism organism = objectMapper.readValue(reader, Organism.class);
 						feedSingleOrganism(organismIndex, feeder, organism);
 					}
 				}

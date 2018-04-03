@@ -48,4 +48,6 @@ public interface Organism extends QuantumConsumer, Mutable {
 	 */
 	String getId();
 	
+	void setId(String id);
+	
 }
