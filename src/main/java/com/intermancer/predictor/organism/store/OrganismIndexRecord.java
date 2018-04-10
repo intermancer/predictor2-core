@@ -1,44 +1,16 @@
 package com.intermancer.predictor.organism.store;
 
-import java.util.Comparator;
-
-import com.intermancer.predictor.organism.Organism;
-
 // TODO: Rename this OrganismStoreIndexRecord
 public class OrganismIndexRecord {
 	
-	private static class ScoreComparator implements Comparator<OrganismIndexRecord> {
-
-		@Override
-		public int compare(OrganismIndexRecord o1, OrganismIndexRecord o2) {
-			return (int) (o1.getScore() - o2.getScore());
-		}
-		
-	}
-	
-	public static final ScoreComparator COMPARATOR = new ScoreComparator();
-
-	private Organism organism;
 	private String organismId;
 	private double score;
-	private int index;
+	private int organismIdIndex;
+	private int scoreIndex;
 	
-	public OrganismIndexRecord() {
-		// Nothing.
-	}
-	
-	public OrganismIndexRecord(double score, Organism organism) {
+	public OrganismIndexRecord(double score, String organismId) {
 		setScore(score);
-		setOrganism(organism);
-	}
-	
-	public Organism getOrganism() {
-		return organism;
-	}
-	
-	public void setOrganism(Organism organism) {
-		this.organism = organism;
-		setOrganismId(organism.getId());
+		setOrganismId(organismId);
 	}
 	
 	public double getScore() {
@@ -49,12 +21,20 @@ public class OrganismIndexRecord {
 		this.score = score;
 	}
 	
-	public int getIndex() {
-		return index;
+	public int getOrganismIdIndex() {
+		return organismIdIndex;
 	}
 
-	public void setIndex(int index) {
-		this.index = index;
+	public void setOrganismIdIndex(int organismIdIndex) {
+		this.organismIdIndex = organismIdIndex;
+	}
+
+	public int getScoreIndex() {
+		return scoreIndex;
+	}
+
+	public void setScoreIndex(int scoreIndex) {
+		this.scoreIndex = scoreIndex;
 	}
 
 	public String getOrganismId() {

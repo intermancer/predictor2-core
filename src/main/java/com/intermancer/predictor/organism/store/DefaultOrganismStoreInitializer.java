@@ -143,17 +143,19 @@ public class DefaultOrganismStoreInitializer extends DefaultOrganismBuilder {
 			
 			for (Organism child : children) {
 				if (store.hasCapacity()) {
-					feedSingleOrganism(organismIndex, feeder, child);
+					feedIndexAndStoreSingleOrganism(organismIndex, feeder, child);
 				}
 			}
 		}
 	}
 
-	private static void feedSingleOrganism(OrganismStoreIndex organismIndex, Feeder feeder, Organism organism)
+	private static void feedIndexAndStoreSingleOrganism( Organism organism, Feeder feeder,
+			OrganismStoreIndex organismIndex, OrganismStore store)
 			throws StoreFullException {
 		feeder.setOrganism(organism);
 		feeder.init();
 		feeder.feedOrganism();
+		store.putOrganism(organism);
 		OrganismIndexRecord indexRecord = organismIndex.indexAndStore(feeder.getEvaluator().getScore(), organism);
 	}
 

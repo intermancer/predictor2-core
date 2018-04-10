@@ -3,8 +3,6 @@ package com.intermancer.predictor.system;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.core.io.ClassPathResource;
 
@@ -13,12 +11,6 @@ import com.intermancer.predictor.evaluator.PredictiveEvaluator;
 import com.intermancer.predictor.feeder.BufferedFeeder;
 import com.intermancer.predictor.feeder.Feeder;
 import com.intermancer.predictor.feeder.SimpleRF;
-import com.intermancer.predictor.gene.Gene;
-import com.intermancer.predictor.gene.constant.MultiplicationCG;
-import com.intermancer.predictor.gene.window.MovingSumWG;
-import com.intermancer.predictor.organism.Organism;
-import com.intermancer.predictor.organism.store.OrganismStore;
-import com.intermancer.predictor.organism.store.StoreFullException;
 
 public class SystemTest extends QuantumConsumerTest {
 
@@ -46,28 +38,6 @@ public class SystemTest extends QuantumConsumerTest {
 		feeder.addFeedCycleListener(evaluator);
 		
 		return feeder;
-	}
-
-//	protected void fillStoreWithSimpleOrganisms(OrganismStore store) throws StoreFullException {
-//		int constant = 1;
-//		Organism organism = null;
-//		while (store.hasCapacity()) {
-//			organism = getSimpleOrganism(constant);
-//			OrganismStoreRecord storeRecord = new OrganismStoreRecord(constant, organism);
-//			store.addRecord(storeRecord);
-//			constant++;
-//		}
-//	}
-
-	public Organism getMovingAverage(int windowSize) {
-		return getMovingAverage(-1, windowSize);
-	}
-
-	public Organism getMovingAverage(int offset, int windowSize) {
-		List<Gene> genes = new ArrayList<Gene>();
-		genes.add(new MovingSumWG(offset, windowSize));
-		genes.add(new MultiplicationCG(windowSize, false, true));
-		return createOrganism(genes);
 	}
 
 }

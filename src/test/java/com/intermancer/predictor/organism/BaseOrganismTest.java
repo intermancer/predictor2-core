@@ -49,7 +49,7 @@ public class BaseOrganismTest extends QuantumConsumerTest {
 		List<Gene> genes = new ArrayList<Gene>();
 		genes.add(new MultiplicationOG());
 		genes.add(new AdditionOG());
-		return createOrganism(genes);
+		return OrganismTestUtility.createOrganism(genes);
 	}
 
 }

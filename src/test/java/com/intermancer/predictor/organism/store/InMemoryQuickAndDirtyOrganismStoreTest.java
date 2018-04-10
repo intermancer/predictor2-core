@@ -1,4 +1,4 @@
-package com.intermancer.predictor.experiment;
+package com.intermancer.predictor.organism.store;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -19,7 +19,7 @@ import com.intermancer.predictor.organism.breed.BreedStrategy;
 import com.intermancer.predictor.organism.breed.DefaultBreedStrategy;
 import com.intermancer.predictor.organism.store.DefaultOrganismStoreInitializer;
 import com.intermancer.predictor.organism.store.InMemoryQuickAndDirtyOrganismStore;
-import com.intermancer.predictor.organism.store.InMemoryQuickAndDirtyOgranismStoreIndex;
+import com.intermancer.predictor.organism.store.InMemoryQuickAndDirtyOrganismStoreIndex;
 
 public class ExperimentPrimeRunner implements Runnable {
 
@@ -39,7 +39,7 @@ public class ExperimentPrimeRunner implements Runnable {
 
 	public ExperimentPrimeRunner() {
 		context = new ExperimentContext();
-		context.setOrganismStoreIndex(new InMemoryQuickAndDirtyOgranismStoreIndex());
+		context.setOrganismStoreIndex(new InMemoryQuickAndDirtyOrganismStoreIndex());
 		setUpFeeder();
 		setUpEvaluator();
 		setUpBreeder();

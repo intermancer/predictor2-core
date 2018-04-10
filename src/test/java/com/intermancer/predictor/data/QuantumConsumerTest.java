@@ -11,12 +11,11 @@ import com.intermancer.predictor.data.Channel;
 import com.intermancer.predictor.data.ConsumeResponse;
 import com.intermancer.predictor.data.Quantum;
 import com.intermancer.predictor.data.QuantumConsumer;
-import com.intermancer.predictor.gene.Chromosome;
 import com.intermancer.predictor.gene.Gene;
 import com.intermancer.predictor.gene.constant.AdditionCG;
 import com.intermancer.predictor.mutation.MutationCommand;
-import com.intermancer.predictor.organism.BaseOrganism;
 import com.intermancer.predictor.organism.Organism;
+import com.intermancer.predictor.organism.OrganismTestUtility;
 
 public class QuantumConsumerTest {
 
@@ -72,22 +71,10 @@ public class QuantumConsumerTest {
 		return null;
 	}
 
-	protected Organism createOrganism(List<Gene> genes) {
-		BaseOrganism organism = new BaseOrganism();
-		
-		for(Gene gene : genes) {
-			Chromosome chromosome = new Chromosome();
-			chromosome.addGene(gene);
-			organism.addChromosome(chromosome);
-		}
-		
-		return organism;
-	}
-	
 	protected Organism getSimpleOrganism(int constant) {
 		List<Gene> genes = new ArrayList<Gene>();
 		genes.add(new AdditionCG(constant));
-		return createOrganism(genes);
+		return OrganismTestUtility.createOrganism(genes);
 	}
 
 	protected Organism getSimpleOrganism() {

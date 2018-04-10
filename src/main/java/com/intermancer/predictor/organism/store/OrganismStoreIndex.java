@@ -6,13 +6,11 @@ public interface OrganismStoreIndex {
 	
 	OrganismIndexRecord getRandomOrganismIndexRecord();
 	OrganismIndexRecord getRandomOrganismIndexRecordFromLowScorePool(double d);
-	void analyze();
 	double getHighestScore();
 	double getLowestScore();
 	int findIndexByScore(double targetScore);
 	OrganismIndexRecord findByIndex(int index);
-	OrganismIndexRecord indexAndStore(double score, Organism organism) throws StoreFullException;
-	OrganismStore getOrganismStore();
+	OrganismIndexRecord index(double score, Organism organism);
 	void removeRecord(String organismId);
 
 }
