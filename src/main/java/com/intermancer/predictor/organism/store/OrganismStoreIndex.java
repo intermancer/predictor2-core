@@ -9,8 +9,8 @@ public interface OrganismStoreIndex {
 	double getHighestScore();
 	double getLowestScore();
 	int findIndexByScore(double targetScore);
-	OrganismIndexRecord findByIndex(int index);
+	OrganismIndexRecord findByScoreIndex(int index);
 	OrganismIndexRecord index(double score, Organism organism);
-	void removeRecord(String organismId);
+	void deleteRecord(String organismId);
 
 }

@@ -3,23 +3,15 @@ package com.intermancer.predictor.organism.store;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.intermancer.predictor.organism.Organism;
 
 
 // TODO Correct misspelling in class name
 public class InMemoryQuickAndDirtyOrganismStoreIndex implements OrganismStoreIndex {
-	
-	private static class IdComparator implements Comparator<OrganismIndexRecord> {
-
-		@Override
-		public int compare(OrganismIndexRecord arg0, OrganismIndexRecord arg1) {
-			return arg0.getOrganismId().compareTo(arg1.getOrganismId());
-		}
-		
-	}
-	private static final Comparator<OrganismIndexRecord> ID_COMPARATOR = new IdComparator();
 	
 	private static class ScoreComparator implements Comparator<OrganismIndexRecord> {
 
@@ -37,62 +29,80 @@ public class InMemoryQuickAndDirtyOrganismStoreIndex implements OrganismStoreInd
 	}
 	private static final Comparator<OrganismIndexRecord> SCORE_COMPARATOR = new ScoreComparator();
 	
-	private List<OrganismIndexRecord> idIndex;
+	private Map<String, OrganismIndexRecord> idMap;
 	private List<OrganismIndexRecord> scoreIndex;
 	
 	public InMemoryQuickAndDirtyOrganismStoreIndex() {
-		idIndex = new ArrayList<OrganismIndexRecord>(InMemoryQuickAndDirtyOrganismStore.DEFAULT_CAPACITY);
+		idMap = new HashMap<String, OrganismIndexRecord>(InMemoryQuickAndDirtyOrganismStore.DEFAULT_CAPACITY);
 		scoreIndex = new ArrayList<OrganismIndexRecord>(InMemoryQuickAndDirtyOrganismStore.DEFAULT_CAPACITY);
 	}
 	
 	@Override
 	public double getHighestScore() {
-		if (!scoreIndex.isEmpty()) {
-			return scoreIndex.get(0).getScore();
+		if (scoreIndex.isEmpty()) {
+			return Double.NaN;
 		}
-		return 0;
+		return scoreIndex.get(scoreIndex.size() - 1).getScore();
 	}
 
 	@Override
 	public double getLowestScore() {
-		// TODO Auto-generated method stub
-		return 0;
+		if (scoreIndex.isEmpty()) {
+			return Double.NaN;
+		}
+		return scoreIndex.get(0).getScore();
 	}
 
 	@Override
 	public int findIndexByScore(double targetScore) {
-		// TODO Auto-generated method stub
-		return 0;
+		OrganismIndexRecord dummyIndexRecord = new OrganismIndexRecord(targetScore, "dummy");
+		int searchIndex = Collections.binarySearch(scoreIndex, dummyIndexRecord, SCORE_COMPARATOR);
+		if (searchIndex < 0) {
+			searchIndex++;
+			searchIndex = Math.abs(searchIndex);
+		}
+		return searchIndex;
 	}
 
 	@Override
-	public OrganismIndexRecord findByIndex(int index) {
-		// TODO Auto-generated method stub
+	public OrganismIndexRecord findByScoreIndex(int index) {
+		if (index < scoreIndex.size()) {
+			return scoreIndex.get(index);
+		}
 		return null;
 	}
 
 	@Override
 	public OrganismIndexRecord getRandomOrganismIndexRecord() {
-		// TODO Auto-generated method stub
-		return null;
+		int targetIndex = Double.valueOf(Math.floor(Math.random() * scoreIndex.size())).intValue();
+		return scoreIndex.get(targetIndex);
 	}
 
 	@Override
-	public OrganismIndexRecord getRandomOrganismIndexRecordFromLowScorePool(double d) {
-		// TODO Auto-generated method stub
-		return null;
+	public OrganismIndexRecord getRandomOrganismIndexRecordFromLowScorePool(double poolSize) {
+		if (poolSize > 1.0) {
+			poolSize = 1.0;
+		}
+		int targetIndex = Double.valueOf(Math.floor(Math.random() * scoreIndex.size() * poolSize)).intValue();
+		return scoreIndex.get(targetIndex);
 	}
 
 	@Override
-	public void removeRecord(String organismId) {
-		// TODO Auto-generated method stub
-		
+	public void deleteRecord(String organismId) {
+		OrganismIndexRecord indexRecord = idMap.get(organismId);
+		if (indexRecord != null) {
+			idMap.remove(organismId);
+			scoreIndex.remove(indexRecord.getScoreIndex());
+			for (int i = indexRecord.getScoreIndex(); i < scoreIndex.size(); i++) {
+				scoreIndex.get(i).setScoreIndex(i);
+			}
+		}
 	}
 
 	@Override
 	public OrganismIndexRecord index(double score, Organism organism) {
 		OrganismIndexRecord indexRecord = new OrganismIndexRecord(score, organism.getId());
-		insertIntoIdIndex(indexRecord);
+		idMap.put(organism.getId(), indexRecord);
 		insertIntoScoreIndex(indexRecord);
 		return indexRecord;
 	}
@@ -100,18 +110,9 @@ public class InMemoryQuickAndDirtyOrganismStoreIndex implements OrganismStoreInd
 	private void insertIntoScoreIndex(OrganismIndexRecord indexRecord) {
 		int targetIndex = getTargetIndex(scoreIndex, indexRecord, SCORE_COMPARATOR);
 		scoreIndex.add(targetIndex, indexRecord);
-		for (int i = targetIndex; i < idIndex.size(); i++) {
+		for (int i = targetIndex; i < scoreIndex.size(); i++) {
 			OrganismIndexRecord shiftingRecord = scoreIndex.get(i);
 			shiftingRecord.setScoreIndex(i);
-		}
-	}
-
-	private void insertIntoIdIndex(OrganismIndexRecord indexRecord) {
-		int targetIndex = getTargetIndex(idIndex, indexRecord, ID_COMPARATOR);
-		idIndex.add(targetIndex, indexRecord);
-		for (int i = targetIndex; i < idIndex.size(); i++) {
-			OrganismIndexRecord shiftingRecord = idIndex.get(i);
-			shiftingRecord.setOrganismIdIndex(i);
 		}
 	}
 

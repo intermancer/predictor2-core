@@ -66,7 +66,7 @@ public class ExperimentPrimeTest extends SystemTest {
 		System.out.println("Five best organism records:");
 		for (int i = 0; i < 5; i++) {
 			System.out.println(StringEscapeUtils.escapeJava(
-					mapper.writeValueAsString(experimentRunner.getContext().getOrganismStore().findByIndex(i).getOrganism())));
+					mapper.writeValueAsString(experimentRunner.getContext().getOrganismStore().findByScoreIndex(i).getOrganism())));
 		}
 
 	}

@@ -5,7 +5,6 @@ public class OrganismIndexRecord {
 	
 	private String organismId;
 	private double score;
-	private int organismIdIndex;
 	private int scoreIndex;
 	
 	public OrganismIndexRecord(double score, String organismId) {
@@ -21,14 +20,6 @@ public class OrganismIndexRecord {
 		this.score = score;
 	}
 	
-	public int getOrganismIdIndex() {
-		return organismIdIndex;
-	}
-
-	public void setOrganismIdIndex(int organismIdIndex) {
-		this.organismIdIndex = organismIdIndex;
-	}
-
 	public int getScoreIndex() {
 		return scoreIndex;
 	}
