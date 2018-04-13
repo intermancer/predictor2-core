@@ -1,5 +1,6 @@
 package com.intermancer.predictor.organism.store;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
