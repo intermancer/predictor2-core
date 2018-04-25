@@ -9,7 +9,7 @@ import com.intermancer.predictor.feeder.PassThroughFeeder;
 import com.intermancer.predictor.system.SystemTest;
 
 public class DefaultOrganismStoreInitializerTest extends SystemTest {
-	
+
 	private static final int DEFAULT_PREDICTIVE_WINDOW_SIZE = 2;
 	private static final String FILE_STORE_PATH = "src/test/resources/com/intermancer/predictor/test/data/store";
 
@@ -19,12 +19,14 @@ public class DefaultOrganismStoreInitializerTest extends SystemTest {
 		PredictiveEvaluator evaluator = new PredictiveEvaluator();
 		evaluator.setPredictiveWindowSize(DEFAULT_PREDICTIVE_WINDOW_SIZE);
 		feeder.addFeedCycleListener(evaluator);
-		
+
 		InMemoryQuickAndDirtyOrganismStore organismStore = new InMemoryQuickAndDirtyOrganismStore();
-		
-		DefaultOrganismStoreInitializer.loadDiskStoreOrganisms(organismStore, feeder, FILE_STORE_PATH);
+		InMemoryQuickAndDirtyOrganismStoreIndex organismStoreIndex = new InMemoryQuickAndDirtyOrganismStoreIndex();
+
+		DefaultOrganismStoreInitializer.loadDiskStoreOrganisms(organismStore, organismStoreIndex, feeder,
+				FILE_STORE_PATH);
 		assertEquals(2, organismStore.getCount());
-		
+
 	}
 
 }

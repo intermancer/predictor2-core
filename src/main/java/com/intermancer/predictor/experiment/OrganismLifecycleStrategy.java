@@ -5,6 +5,7 @@ import java.util.List;
 import com.intermancer.predictor.organism.Organism;
 import com.intermancer.predictor.organism.store.OrganismStoreIndex;
 import com.intermancer.predictor.organism.store.OrganismIndexRecord;
+import com.intermancer.predictor.organism.store.OrganismStore;
 import com.intermancer.predictor.organism.store.StoreFullException;
 
 public interface OrganismLifecycleStrategy {
@@ -16,6 +17,6 @@ public interface OrganismLifecycleStrategy {
 	OrganismIndexRecord feedOrganism(Organism organism);
 
 	List<OrganismIndexRecord> mergeIntoPopulation(List<OrganismIndexRecord> ancestors, List<OrganismIndexRecord> children,
-			OrganismStoreIndex storeIndex) throws StoreFullException;
+			OrganismStoreIndex storeIndex, OrganismStore store) throws StoreFullException;
 
 }

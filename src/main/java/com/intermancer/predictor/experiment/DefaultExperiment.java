@@ -21,11 +21,12 @@ public class DefaultExperiment implements Experiment {
 	@Override
 	public ExperimentCycleResult runExperimentCycle() throws Exception {
 		ExperimentCycleResult result = new ExperimentCycleResult();
-		OrganismStoreIndex organismStore = context.getOrganismStoreIndex();
+		 context.getOrganismStoreIndex();
+		co
 		OrganismLifecycleStrategy lifecycle = context.getOrganismLifecycleStrategy();
-		result.setAncestors(lifecycle.getAncestors(organismStore));
+		result.setAncestors(lifecycle.getAncestors(organismStoreIndex));
 		result.setChildren(lifecycle.generateNextGeneration(result.getAncestors()));
-		result.setFinals(lifecycle.mergeIntoPopulation(result.getAncestors(), result.getChildren(), organismStore));
+		result.setFinals(lifecycle.mergeIntoPopulation(result.getAncestors(), result.getChildren(), organismStoreIndex));
 		boolean parentWasReplaced = false;
 		for (OrganismIndexRecord record : result.getFinals()) {
 			if (result.getChildren().contains(record)) {

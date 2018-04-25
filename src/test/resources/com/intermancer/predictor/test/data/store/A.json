@@ -1,35 +1,66 @@
 {
-  "id" : 843,
-  "score" : 3.9661126414762775E14,
-  "organism" : {
-    "classname" : "com.intermancer.predictor.organism.BaseOrganism",
-    "chromosomes" : [ {
-      "genes" : [ {
-        "classname" : "com.intermancer.predictor.gene.logic.SwitchLG",
-        "values" : [ 2.9314919263678658E10, 2.979493888E9, 1400.38 ],
-        "offsets" : [ -1, -2, -3 ],
-        "hungryCycles" : 0
-      }, {
-        "classname" : "com.intermancer.predictor.gene.transform.AbsoluteValueTG",
-        "values" : [ 1400.38 ],
-        "offsets" : [ -1 ],
-        "hungryCycles" : 0
-      } ]
-    }, {
-      "genes" : [ {
-        "classname" : "com.intermancer.predictor.gene.operation.MultiplicationOG",
-        "values" : [ 2.9314919263678658E10, 1400.38 ],
-        "offsets" : [ -2, -1 ],
-        "hungryCycles" : 0
-      }, {
-        "classname" : "com.intermancer.predictor.gene.window.MovingSumWG",
-        "values" : [ 4.105202663847032E13 ],
-        "windowValues" : [ [ 4.105202663847032E13 ] ],
-        "windowSize" : 1,
-        "offsets" : [ -1 ],
-        "hungryCycles" : 1
-      } ]
-    } ]
-  },
-  "index" : 0
+	"id": "A",
+	"classname": "com.intermancer.predictor.organism.BaseOrganism",
+	"chromosomes": [
+		{
+			"genes": [
+				{
+					"classname": "com.intermancer.predictor.gene.logic.SwitchLG",
+					"values": [
+						2.9314919263678658E10,
+						2.979493888E9,
+						1400.38
+					],
+					"offsets": [
+						-1,
+						-2,
+						-3
+					],
+					"hungryCycles": 0
+				},
+				{
+					"classname": "com.intermancer.predictor.gene.transform.AbsoluteValueTG",
+					"values": [
+						1400.38
+					],
+					"offsets": [
+						-1
+					],
+					"hungryCycles": 0
+				}
+			]
+		},
+		{
+			"genes": [
+				{
+					"classname": "com.intermancer.predictor.gene.operation.MultiplicationOG",
+					"values": [
+						2.9314919263678658E10,
+						1400.38
+					],
+					"offsets": [
+						-2,
+						-1
+					],
+					"hungryCycles": 0
+				},
+				{
+					"classname": "com.intermancer.predictor.gene.window.MovingSumWG",
+					"values": [
+						4.105202663847032E13
+					],
+					"windowValues": [
+						[
+							4.105202663847032E13
+						]
+					],
+					"windowSize": 1,
+					"offsets": [
+						-1
+					],
+					"hungryCycles": 1
+				}
+			]
+		}
+	]
 }

@@ -1,7 +1,5 @@
 {
-  "id" : 842,
-  "score" : 3.9661126414762775E14,
-  "organism" : {
+	"id" : "B",
     "classname" : "com.intermancer.predictor.organism.BaseOrganism",
     "chromosomes" : [ {
       "genes" : [ {
@@ -34,6 +32,4 @@
         "hungryCycles" : 0
       } ]
     } ]
-  },
-  "index" : 1
 }

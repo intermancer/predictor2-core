@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.intermancer.predictor.feeder.Feeder;
 import com.intermancer.predictor.organism.breed.BreedStrategy;
+import com.intermancer.predictor.organism.store.OrganismStore;
 import com.intermancer.predictor.organism.store.OrganismStoreIndex;
 
 public class ExperimentContext {
@@ -16,6 +17,7 @@ public class ExperimentContext {
 	private int cycles = DEFAULT_NUMBER_OF_CYCLES;
 	private Experiment experiment;
 	private OrganismStoreIndex organismStoreIndex;
+	private OrganismStore organismStore;
 	private Feeder feeder;
 	private OrganismLifecycleStrategy organismLifecycleStrategy;
 	private BreedStrategy breedStrategy;
@@ -53,6 +55,14 @@ public class ExperimentContext {
 
 	public void setOrganismStoreIndex(OrganismStoreIndex organismStoreIndex) {
 		this.organismStoreIndex = organismStoreIndex;
+	}
+
+	public OrganismStore getOrganismStore() {
+		return organismStore;
+	}
+
+	public void setOrganismStore(OrganismStore organismStore) {
+		this.organismStore = organismStore;
 	}
 
 	public Feeder getFeeder() {
