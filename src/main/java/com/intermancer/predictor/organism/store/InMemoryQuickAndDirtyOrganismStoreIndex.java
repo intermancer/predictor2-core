@@ -13,22 +13,6 @@ import com.intermancer.predictor.organism.Organism;
 // TODO Correct misspelling in class name
 public class InMemoryQuickAndDirtyOrganismStoreIndex implements OrganismStoreIndex {
 	
-	private static class ScoreComparator implements Comparator<OrganismIndexRecord> {
-
-		@Override
-		public int compare(OrganismIndexRecord arg0, OrganismIndexRecord arg1) {
-			if (arg0.getScore() > arg1.getScore()) {
-				return 1;
-			} else if (arg0.getScore() == arg1.getScore()) {
-				return 0;
-			} else {
-				return -1;
-			}
-		}
-		
-	}
-	private static final Comparator<OrganismIndexRecord> SCORE_COMPARATOR = new ScoreComparator();
-	
 	private Map<String, OrganismIndexRecord> idMap;
 	private List<OrganismIndexRecord> scoreIndex;
 	
@@ -56,7 +40,7 @@ public class InMemoryQuickAndDirtyOrganismStoreIndex implements OrganismStoreInd
 	@Override
 	public int findIndexByScore(double targetScore) {
 		OrganismIndexRecord dummyIndexRecord = new OrganismIndexRecord(targetScore, "dummy");
-		int searchIndex = Collections.binarySearch(scoreIndex, dummyIndexRecord, SCORE_COMPARATOR);
+		int searchIndex = Collections.binarySearch(scoreIndex, dummyIndexRecord, OrganismIndexRecord.SCORE_COMPARATOR);
 		if (searchIndex < 0) {
 			searchIndex++;
 			searchIndex = Math.abs(searchIndex);
@@ -102,13 +86,18 @@ public class InMemoryQuickAndDirtyOrganismStoreIndex implements OrganismStoreInd
 	@Override
 	public OrganismIndexRecord index(double score, Organism organism) {
 		OrganismIndexRecord indexRecord = new OrganismIndexRecord(score, organism.getId());
-		idMap.put(organism.getId(), indexRecord);
+		return index(indexRecord);
+	}
+	
+	@Override
+	public OrganismIndexRecord index(OrganismIndexRecord indexRecord) {
+		idMap.put(indexRecord.getOrganismId(), indexRecord);
 		insertIntoScoreIndex(indexRecord);
 		return indexRecord;
 	}
 
 	private void insertIntoScoreIndex(OrganismIndexRecord indexRecord) {
-		int targetIndex = getTargetIndex(scoreIndex, indexRecord, SCORE_COMPARATOR);
+		int targetIndex = getTargetIndex(scoreIndex, indexRecord, OrganismIndexRecord.SCORE_COMPARATOR);
 		scoreIndex.add(targetIndex, indexRecord);
 		for (int i = targetIndex; i < scoreIndex.size(); i++) {
 			OrganismIndexRecord shiftingRecord = scoreIndex.get(i);

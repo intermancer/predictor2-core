@@ -1,6 +1,5 @@
 package com.intermancer.predictor.experiment;
 
-import com.intermancer.predictor.organism.store.OrganismStoreIndex;
 import com.intermancer.predictor.organism.store.OrganismIndexRecord;
 
 public class DefaultExperiment implements Experiment {
@@ -21,12 +20,11 @@ public class DefaultExperiment implements Experiment {
 	@Override
 	public ExperimentCycleResult runExperimentCycle() throws Exception {
 		ExperimentCycleResult result = new ExperimentCycleResult();
-		 context.getOrganismStoreIndex();
-		co
 		OrganismLifecycleStrategy lifecycle = context.getOrganismLifecycleStrategy();
-		result.setAncestors(lifecycle.getAncestors(organismStoreIndex));
-		result.setChildren(lifecycle.generateNextGeneration(result.getAncestors()));
-		result.setFinals(lifecycle.mergeIntoPopulation(result.getAncestors(), result.getChildren(), organismStoreIndex));
+		result.setAncestors(lifecycle.getAncestors(context.getOrganismStoreIndex()));
+		result.setChildren(lifecycle.generateNextGeneration(result.getAncestors(), context.getOrganismStore()));
+		result.setFinals(lifecycle.mergeIntoPopulation(result.getAncestors(),
+				result.getChildren(), context.getOrganismStore(), context.getOrganismStoreIndex()));
 		boolean parentWasReplaced = false;
 		for (OrganismIndexRecord record : result.getFinals()) {
 			if (result.getChildren().contains(record)) {

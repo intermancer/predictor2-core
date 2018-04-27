@@ -12,11 +12,11 @@ public interface OrganismLifecycleStrategy {
 
 	List<OrganismIndexRecord> getAncestors(OrganismStoreIndex storeIndex);
 
-	List<OrganismIndexRecord> generateNextGeneration(List<OrganismIndexRecord> ancestors);
-
 	OrganismIndexRecord feedOrganism(Organism organism);
 
 	List<OrganismIndexRecord> mergeIntoPopulation(List<OrganismIndexRecord> ancestors, List<OrganismIndexRecord> children,
-			OrganismStoreIndex storeIndex, OrganismStore store) throws StoreFullException;
+			OrganismStore store, OrganismStoreIndex storeIndex) throws StoreFullException;
+
+	List<OrganismIndexRecord> generateNextGeneration(List<OrganismIndexRecord> ancestors, OrganismStore store);
 
 }

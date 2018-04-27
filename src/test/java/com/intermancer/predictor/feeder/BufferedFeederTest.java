@@ -11,6 +11,7 @@ import com.intermancer.predictor.data.ConsumeResponse;
 import com.intermancer.predictor.data.Quantum;
 import com.intermancer.predictor.evaluator.PredictiveEvaluator;
 import com.intermancer.predictor.organism.Organism;
+import com.intermancer.predictor.organism.OrganismTestUtility;
 import com.intermancer.predictor.system.SystemTest;
 
 /**
@@ -44,7 +45,7 @@ public class BufferedFeederTest extends SystemTest {
 		memorizer = new MemorizingFCL(MEMORIZER_WINDOW);
 		readerFeeder.addFeedCycleListener(memorizer);
 
-		organism = getMovingAverage(4);
+		organism = OrganismTestUtility.getMovingAverage(4);
 		readerFeeder.setOrganism(organism);
 	}
 	

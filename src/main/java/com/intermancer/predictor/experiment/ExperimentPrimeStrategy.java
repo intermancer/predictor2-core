@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intermancer.predictor.feeder.Feeder;
 import com.intermancer.predictor.organism.Organism;
 import com.intermancer.predictor.organism.breed.BreedStrategy;
@@ -19,14 +14,10 @@ import com.intermancer.predictor.organism.store.StoreFullException;
 
 public class ExperimentPrimeStrategy implements OrganismLifecycleStrategy {
 
-	private static final Logger logger = LogManager.getLogger(ExperimentPrimeStrategy.class);
-	private final ObjectMapper mapper;
-
 	private BreedStrategy breedStrategy;
 	private Feeder feeder;
 
 	public ExperimentPrimeStrategy() {
-		mapper = new ObjectMapper();
 	}
 
 	public ExperimentPrimeStrategy(BreedStrategy breedStrategy, Feeder feeder) {
@@ -54,10 +45,10 @@ public class ExperimentPrimeStrategy implements OrganismLifecycleStrategy {
 	}
 
 	@Override
-	public List<OrganismIndexRecord> generateNextGeneration(List<OrganismIndexRecord> ancestors) {
+	public List<OrganismIndexRecord> generateNextGeneration(List<OrganismIndexRecord> ancestors, OrganismStore store) {
 		List<Organism> ancestorOrganisms = new ArrayList<Organism>();
 		for (OrganismIndexRecord record : ancestors) {
-			ancestorOrganisms.add(record.getOrganism());
+			ancestorOrganisms.add(store.getOrganism(record.getOrganismId()));
 		}
 		List<Organism> children = breedStrategy.breed(ancestorOrganisms);
 		List<OrganismIndexRecord> scoredChildren = new ArrayList<OrganismIndexRecord>();
@@ -73,17 +64,17 @@ public class ExperimentPrimeStrategy implements OrganismLifecycleStrategy {
 		feeder.setOrganism(organism);
 		feeder.init();
 		feeder.feedOrganism();
-		OrganismIndexRecord storeRecord = new OrganismIndexRecord(feeder.getEvaluator().getScore(), organism);
+		OrganismIndexRecord storeRecord = new OrganismIndexRecord(feeder.getEvaluator().getScore(), organism.getId());
 		return storeRecord;
 	}
 
 	@Override
 	public List<OrganismIndexRecord> mergeIntoPopulation(List<OrganismIndexRecord> ancestors, List<OrganismIndexRecord> children,
-			OrganismStoreIndex storeIndex) throws StoreFullException {
+			OrganismStore store, OrganismStoreIndex storeIndex) throws StoreFullException {
 		List<OrganismIndexRecord> allOrganisms = new ArrayList<OrganismIndexRecord>();
 		allOrganisms.addAll(children);
 		allOrganisms.addAll(ancestors);
-		Collections.sort(allOrganisms, OrganismIndexRecord.COMPARATOR);
+		Collections.sort(allOrganisms, OrganismIndexRecord.SCORE_COMPARATOR);
 
 		List<OrganismIndexRecord> recordsToRemove = new ArrayList<OrganismIndexRecord>();
 		List<OrganismIndexRecord> recordsToAdd = new ArrayList<OrganismIndexRecord>();
@@ -103,36 +94,14 @@ public class ExperimentPrimeStrategy implements OrganismLifecycleStrategy {
 			}
 		}
 
-		OrganismStore store = storeIndex.getOrganismStore();
 		for (OrganismIndexRecord record : recordsToRemove) {
 			store.deleteOrganism(record.getOrganismId());
 			storeIndex.deleteRecord(record.getOrganismId());
 		}
 
 		for (OrganismIndexRecord record : recordsToAdd) {
-			try {
-				storeIndex.indexAndStore(record.getScore(), record.getOrganism());
-			} catch (StoreFullException ex) {
-				try {
-					// This happened when the two ancestors were the same
-					// record.
-					ArrayList<Object> items = new ArrayList<Object>();
-					items.add("==========ancestors==========");
-					items.add(ancestors);
-					items.add("==========children==========");
-					items.add(children);
-					items.add("==========allOrganisms==========");
-					items.add(allOrganisms);
-					items.add("==========recordsToRemove==========");
-					items.add(recordsToRemove);
-					items.add("==========recordsToAdd==========");
-					items.add(recordsToAdd);
-					logger.error("Combined record:{}", mapper.writeValueAsString(items));
-				} catch (JsonProcessingException e) {
-					e.printStackTrace();
-				}
-				throw ex;
-			}
+			store.putOrganism(store.getOrganism(record.getOrganismId()));
+			storeIndex.index(record);
 		}
 
 		return finals;
